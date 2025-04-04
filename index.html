@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Jogos Pro X+</title> <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <title>Mega Jogos Pro X+</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <style>
         /* Tema escuro e layout profissional */
         :root {
@@ -173,14 +174,18 @@
             display: block;
         }
         .win-message { /* Estilo para mensagem de vitória */
-             color: var(--win-color);
-             font-weight: bold;
-             text-align: center;
-             font-size: 1.3em;
-             margin-top: 15px;
-             padding: 10px;
-             background-color: rgba(76, 175, 80, 0.1); /* Fundo leve */
-             border-radius: 5px;
+           color: var(--win-color);
+           font-weight: bold;
+           text-align: center;
+           font-size: 1.3em;
+           margin-top: 15px;
+           padding: 10px;
+           background-color: rgba(76, 175, 80, 0.1); /* Fundo leve */
+           border-radius: 5px;
+           display: none; /* Escondido por padrão */
+        }
+        .win-message.visible {
+            display: block;
         }
 
 
@@ -205,14 +210,14 @@
          h3 {
             color: var(--accent-color);
             margin-bottom: 15px;
-             border-bottom: 1px solid var(--border-color);
-             padding-bottom: 5px;
-             font-size: 1.2em;
-        }
-        h4 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            font-size: 1.2em;
+         }
+         h4 {
             margin-bottom: 5px;
             color: var(--accent-color);
-        }
+         }
 
         button {
             background-color: var(--accent-color);
@@ -228,27 +233,27 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        button:hover {
+        button:hover:not(:disabled) { /* Adicionado :not(:disabled) */
             background-color: #008fcc;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        button:active {
-             transform: scale(0.97);
-             box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        button:active:not(:disabled) { /* Adicionado :not(:disabled) */
+            transform: scale(0.97);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         button.secondary {
             background-color: var(--tertiary-bg);
             color: var(--text-color);
         }
-        button.secondary:hover {
-             background-color: #555;
+        button.secondary:hover:not(:disabled) { /* Adicionado :not(:disabled) */
+            background-color: #555;
         }
         button:disabled { /* Estilo para botões desabilitados */
-             background-color: #555;
-             color: #aaa;
-             cursor: not-allowed;
-             box-shadow: none;
-             transform: none;
+           background-color: #555 !important; /* Adicionado !important para sobrescrever hover */
+           color: #aaa;
+           cursor: not-allowed;
+           box-shadow: none;
+           transform: none;
         }
 
 
@@ -266,27 +271,27 @@
             vertical-align: middle; /* Alinhar com labels/botões */
         }
         input[type="text"]::placeholder, input[type="number"]::placeholder {
-             color: #aaa;
-             opacity: 0.8;
+            color: #aaa;
+            opacity: 0.8;
         }
 
 
         label {
-             margin-right: 8px;
-             margin-left: 3px;
-             display: inline-block; /* Para alinhar com inputs */
-             margin-bottom: 5px;
+            margin-right: 8px;
+            margin-left: 3px;
+            display: inline-block; /* Para alinhar com inputs */
+            margin-bottom: 5px;
         }
 
         /* Custom Radio/Checkbox (melhor visual) */
         .setting-option {
-             margin-bottom: 10px;
+            margin-bottom: 10px;
         }
         .setting-option label {
-             cursor: pointer;
-             display: inline-flex; /* Alinhar ícone e texto */
-             align-items: center;
-             margin-right: 15px;
+            cursor: pointer;
+            display: inline-flex; /* Alinhar ícone e texto */
+            align-items: center;
+            margin-right: 15px;
         }
         .setting-option input[type="radio"], .setting-option input[type="checkbox"] {
             opacity: 0; /* Esconder o original */
@@ -317,15 +322,15 @@
             background-image: radial-gradient(circle, var(--primary-bg-dark) 40%, transparent 45%);
         }
          .setting-option input[type="checkbox"]:checked + label::before {
-             background-color: var(--accent-color);
-             border-color: var(--accent-color);
-              /* Adicionar um checkmark (pode usar SVG ou caractere) */
-              color: var(--primary-bg-dark);
-              text-align: center;
-              font-weight: bold;
-              content: '✔'; /* Simples checkmark */
-              font-size: 12px;
-              line-height: 17px;
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            /* Adicionar um checkmark (pode usar SVG ou caractere) */
+            color: var(--primary-bg-dark);
+            text-align: center;
+            font-weight: bold;
+            content: '✔'; /* Simples checkmark */
+            font-size: 12px;
+            line-height: 17px;
         }
 
 
@@ -381,7 +386,7 @@
         /* Snake Specific Styles */
         #snakeCanvas { width: 90%; max-width: 400px; height: auto; aspect-ratio: 1 / 1; }
 
-        /* NOVO: Jogo da Memória Styles */
+        /* Jogo da Memória Styles */
         .memory-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Grid responsivo */
@@ -403,6 +408,7 @@
             transform-style: preserve-3d;
             transition: transform 0.5s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            user-select: none; /* Evita seleção de texto no clique */
         }
         .memory-card .card-face {
             position: absolute;
@@ -416,14 +422,15 @@
         }
         .memory-card .card-front {
             background-color: var(--tertiary-bg); /* Cor da frente (oculta) */
-             color: var(--text-color);
-             transform: rotateY(180deg); /* Virada inicialmente */
+            color: var(--text-color);
+            transform: rotateY(180deg); /* Virada inicialmente */
         }
          .memory-card .card-back {
-             background-color: var(--accent-color); /* Cor de trás (visível) */
-             /* Pode adicionar um ícone ou padrão aqui */
-             content: '?'; /* Exemplo */
-             color: var(--primary-bg-dark);
+            background-color: var(--accent-color); /* Cor de trás (visível) */
+            /* Pode adicionar um ícone ou padrão aqui */
+            /* content: '?';  Exemplo */
+            color: var(--primary-bg-dark);
+            font-size: 1.5em; /* Ajusta tamanho do '?' */
          }
 
         .memory-card.flipped {
@@ -432,13 +439,66 @@
         .memory-card.matched {
             cursor: default;
             background-color: var(--win-color); /* Cor quando encontra par */
-             opacity: 0.7;
-             transform: scale(0.95); /* Encolhe um pouco */
-             pointer-events: none; /* Impede novos cliques */
+            opacity: 0.7;
+            transform: scale(0.95) rotateY(180deg); /* Mantém virada e encolhe */
+            pointer-events: none; /* Impede novos cliques */
         }
         #memoryResult {
-             text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px;
+           text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px;
         }
+
+        /* NOVO: CPS Test Styles */
+        #cpsClickArea {
+            display: block; /* Ocupa a linha inteira */
+            width: 90%; /* Largura maior */
+            max-width: 400px; /* Limita largura */
+            height: 150px; /* Altura maior */
+            margin: 20px auto; /* Centraliza */
+            font-size: 1.8em; /* Texto maior */
+            cursor: pointer;
+            background-color: var(--accent-color);
+            color: var(--primary-bg-dark);
+            border: 3px solid var(--border-color);
+            transition: background-color 0.1s ease, transform 0.05s ease;
+        }
+        #cpsClickArea:hover:not(:disabled) {
+            background-color: #008fcc; /* Cor do hover de botão primário */
+        }
+        #cpsClickArea:active:not(:disabled) {
+            transform: scale(0.98); /* Leve encolhida ao clicar */
+        }
+        #cpsClickArea:disabled {
+             background-color: var(--tertiary-bg) !important; /* Fundo quando desabilitado */
+             color: #888;
+             cursor: not-allowed;
+             border-color: #666;
+        }
+        #cpsResultArea {
+            background-color: var(--tertiary-bg);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 25px;
+            text-align: center;
+            border-left: 5px solid var(--accent-color); /* Borda de destaque */
+            display: none; /* Escondido por padrão */
+        }
+        #cpsResultArea h4 {
+             margin-top: 0;
+             margin-bottom: 10px;
+             color: var(--accent-color);
+             font-size: 1.2em;
+        }
+        #cpsResultArea p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        #cpsLevel { font-weight: bold; }
+        /* Cores dos Níveis (Exemplo) */
+        .level-lento { color: var(--error-color); }
+        .level-medio { color: var(--highlight-color); }
+        .level-rapido { color: var(--win-color); }
+        .level-pro { color: #ff8c00; } /* Laranja para Pro */
+        .level-hacker { color: #ff00ff; } /* Magenta para Hacker */
 
 
         /* Settings Styles */
@@ -449,7 +509,7 @@
             transition: border-bottom-color 0.3s;
         }
         .settings-section:last-child {
-             border-bottom: none; /* Remover borda do último */
+            border-bottom: none; /* Remover borda do último */
         }
 
 
@@ -464,45 +524,48 @@
             header h1 {
                 font-size: 1.3em;
             }
-             .tab button {
-                 padding: 12px 15px;
-                 font-size: 0.95em;
+            .tab button {
+                padding: 12px 15px;
+                font-size: 0.95em;
             }
 
             .game-container, .tool-container, .settings-container {
                 padding: 15px;
                 max-width: 95%; /* Ocupar quase toda largura */
-                 width: auto; /* Remover largura fixa */
-                 margin: 15px auto;
+                width: auto; /* Remover largura fixa */
+                margin: 15px auto;
             }
 
             h2 { font-size: 1.3em; margin-bottom: 20px;}
-             h3 { font-size: 1.1em; }
+            h3 { font-size: 1.1em; }
 
             button { padding: 10px 15px; font-size: 0.95em; }
             input[type="text"], input[type="number"], select { max-width: 100%; padding: 9px; } /* Ocupar largura total */
 
             /* Ajustes específicos de jogos */
-             #ticTacToe table { max-width: 90vw; /* Ajustar à largura da tela */}
+            #ticTacToe table { max-width: 90vw; /* Ajustar à largura da tela */}
             #ticTacToe td { font-size: 2.5em; }
 
-             #wordSearchContainer { flex-direction: column; align-items: center; gap: 15px; }
-             #wordSearchList { max-width: 90%; margin-left: 0; }
+            #wordSearchContainer { flex-direction: column; align-items: center; gap: 15px; }
+            #wordSearchList { max-width: 90%; margin-left: 0; }
             #wordSearchGrid td { width: 25px; height: 25px; font-size: 0.9em; }
 
             /* Canvas - manter proporção, limitar largura */
-             #tetrisCanvas { width: 200px; height: 400px; }
-             #tetrisNextPiece { width: 80px; height: 80px;}
-             .tetris-layout { gap: 15px; }
+            #tetrisCanvas { width: 200px; height: 400px; }
+            #tetrisNextPiece { width: 80px; height: 80px;}
+            .tetris-layout { gap: 15px; }
 
             #snakeCanvas { max-width: 90vw; }
             #pongCanvas { max-width: 95vw; }
 
             .memory-grid { max-width: 95%; }
-             .memory-card { height: 60px; font-size: 1.8em; }
+            .memory-card { height: 60px; font-size: 1.8em; }
 
-             /* Settings */
-             .setting-option { display: block; /* Empilhar opções */ }
+            /* CPS Test */
+            #cpsClickArea { height: 120px; font-size: 1.5em;}
+
+            /* Settings */
+            .setting-option { display: block; /* Empilhar opções */ }
         }
 
          /* Telas muito pequenas */
@@ -512,10 +575,11 @@
             h2 { font-size: 1.2em; }
             button { padding: 8px 12px; font-size: 0.9em; }
             #ticTacToe td { font-size: 2em; }
-             #wordSearchGrid td { width: 22px; height: 22px; }
-             .memory-card { height: 55px; font-size: 1.6em; }
-             footer { font-size: 0.8em; padding: 10px; }
-             body { padding-bottom: 60px; } /* Ajustar espaço para footer menor */
+            #wordSearchGrid td { width: 22px; height: 22px; }
+            .memory-card { height: 55px; font-size: 1.6em; }
+            #cpsClickArea { height: 100px; font-size: 1.3em; }
+            footer { font-size: 0.8em; padding: 10px; }
+            body { padding-bottom: 60px; } /* Ajustar espaço para footer menor */
          }
 
     </style>
@@ -523,14 +587,16 @@
 <body>
     <header>
         <img id="logo" src="" alt="Logo" onerror="this.style.display='none'">
-        <h1>Mega Jogos Pro X+</h1> </header>
+        <h1>Mega Jogos Pro X+</h1>
+    </header>
 
     <div class="tab">
         <button class="tablinks" onclick="openGame(event, 'Calculadora')">Calculadora</button>
         <button class="tablinks" onclick="openGame(event, 'Forca')">Forca</button>
         <button class="tablinks" onclick="openGame(event, 'Velha')">Jogo da Velha</button>
         <button class="tablinks" onclick="openGame(event, 'CacaPalavras')">Caça-Palavras</button>
-        <button class="tablinks" onclick="openGame(event, 'Memoria')">Jogo da Memória</button> <button class="tablinks" onclick="openGame(event, 'Tetris')">Tetris</button>
+        <button class="tablinks" onclick="openGame(event, 'Memoria')">Jogo da Memória</button>
+        <button class="tablinks" onclick="openGame(event, 'CPSTest')">Teste de CPS</button> <button class="tablinks" onclick="openGame(event, 'Tetris')">Tetris</button>
         <button class="tablinks" onclick="openGame(event, 'Snake')">Snake</button>
         <button class="tablinks" onclick="openGame(event, 'Pong')">Pong</button>
         <button class="tablinks" onclick="openGame(event, 'Configuracoes')">Configurações</button>
@@ -541,21 +607,27 @@
         <div class="calculator">
             <div id="calcDisplay" class="calculator-display">0</div>
             <div class="calculator-buttons">
-                 <button onclick="clearCalc()" class="clear">C</button> <button onclick="appendCalc('/')" class="operator">/</button>
+                 <button onclick="clearCalc()" class="clear">C</button>
+                 <button onclick="appendCalc('/')" class="operator">/</button>
                  <button onclick="appendCalc('*')" class="operator">*</button>
                  <button onclick="appendCalc('-')" class="operator">-</button>
 
                  <button onclick="appendCalc('7')">7</button>
                  <button onclick="appendCalc('8')">8</button>
                  <button onclick="appendCalc('9')">9</button>
-                 <button onclick="appendCalc('+')" class="operator" style="grid-row: span 2;">+</button> <button onclick="appendCalc('4')">4</button>
+                 <button onclick="appendCalc('+')" class="operator" style="grid-row: span 2;">+</button>
+
+                 <button onclick="appendCalc('4')">4</button>
                  <button onclick="appendCalc('5')">5</button>
                  <button onclick="appendCalc('6')">6</button>
 
                  <button onclick="appendCalc('1')">1</button>
                  <button onclick="appendCalc('2')">2</button>
                  <button onclick="appendCalc('3')">3</button>
-                 <button onclick="calculateResult()" class="equals" style="grid-row: span 2;">=</button> <button onclick="appendCalc('0')" style="grid-column: span 2;">0</button> <button onclick="appendCalc('.')">.</button>
+                 <button onclick="calculateResult()" class="equals" style="grid-row: span 2;">=</button>
+
+                 <button onclick="appendCalc('0')" style="grid-column: span 2;">0</button>
+                 <button onclick="appendCalc('.')">.</button>
             </div>
         </div>
     </div>
@@ -638,32 +710,60 @@
          </div>
          <div id="memoryGrid" class="memory-grid">
              </div>
-          <p id="memoryResult" class="win-message" style="display: none;"></p> <div style="text-align: center; margin-top: 20px;">
+         <p id="memoryResult" class="win-message"></p>
+         <div style="text-align: center; margin-top: 20px;">
              <button onclick="startMemoryGame()">Iniciar / Reiniciar</button>
          </div>
      </div>
 
+    <div id="CPSTest" class="tabcontent game-container">
+        <h2>Teste de CPS (Cliques Por Segundo)</h2>
+        <p style="text-align:center; font-size: 1.1em;">Veja o quão rápido você consegue clicar em 1 minuto!</p>
+
+        <div class="game-info" style="text-align:center; margin-bottom: 15px;">
+            Tempo Restante: <span id="cpsTimer">60</span>s | Cliques: <span id="cpsClicks">0</span>
+        </div>
+
+        <button id="cpsClickArea" disabled>Aguardando Início...</button>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <button id="cpsStartButton" onclick="startCPSTest()">Iniciar (1 Minuto)</button>
+            <button id="cpsStopButton" onclick="stopCPSTest()" disabled class="secondary">Parar Agora</button>
+        </div>
+
+        <div id="cpsResultArea">
+            <h4>Resultado Final</h4>
+            <p>Total de Cliques: <span id="cpsTotalClicks">0</span></p>
+            <p>Tempo: <span id="cpsTimeElapsed">0</span>s</p>
+            <p>Média de CPS: <span id="cpsAverage">0.00</span></p>
+            <p>Seu Nível: <strong id="cpsLevel">Nenhum</strong></p>
+            <p id="cpsComment" style="font-style: italic; margin-top: 10px;"></p>
+        </div>
+    </div>
     <div id="Tetris" class="tabcontent game-container">
         <h2>Tetris Clássico</h2>
         <div class="tetris-layout">
-             <div class="tetris-main-game">
-                  <canvas id="tetrisCanvas"></canvas> <div class="game-info"> Pontos: <span id="tetrisScore">0</span> </div>
-                  <p id="tetrisGameOver" class="game-over-message">GAME OVER!</p>
-             </div>
-             <div class="tetris-side-info">
+            <div class="tetris-main-game">
+                 <canvas id="tetrisCanvas"></canvas>
+                 <div class="game-info"> Pontos: <span id="tetrisScore">0</span> </div>
+                 <p id="tetrisGameOver" class="game-over-message">GAME OVER!</p>
+            </div>
+            <div class="tetris-side-info">
                  <h4>Próxima Peça:</h4>
-                 <canvas id="tetrisNextPiece"></canvas> <div style="text-align: center; margin-top: 20px;">
+                 <canvas id="tetrisNextPiece"></canvas>
+                 <div style="text-align: center; margin-top: 20px;">
                      <button onclick="startTetris()">Iniciar / Reiniciar</button>
                  </div>
                  <p class="instructions" style="margin-top: 20px;">Setas: ← → Mover, ↓ Acelerar, ↑ Girar.</p>
-             </div>
+            </div>
         </div>
     </div>
 
 
     <div id="Snake" class="tabcontent game-container game-canvas-container">
         <h2>Jogo da Cobrinha (Snake)</h2>
-        <canvas id="snakeCanvas"></canvas> <div class="game-info"> Pontos: <span id="snakeScore">0</span> </div>
+        <canvas id="snakeCanvas"></canvas>
+        <div class="game-info"> Pontos: <span id="snakeScore">0</span> </div>
         <p id="snakeGameOver" class="game-over-message">GAME OVER!</p>
         <div style="text-align: center; margin-top: 10px;"> <button onclick="startSnake()">Iniciar / Reiniciar</button> </div>
         <p class="instructions">Use as Setas do teclado para mover.</p>
@@ -671,7 +771,8 @@
 
     <div id="Pong" class="tabcontent game-container pong-container">
         <h2>Pong Clássico</h2>
-        <canvas id="pongCanvas"></canvas> <div class="game-info">
+        <canvas id="pongCanvas"></canvas>
+        <div class="game-info">
              Jogador 1: <span id="pongScoreLeft">0</span> | Jogador 2: <span id="pongScoreRight">0</span>
         </div>
         <p id="pongGameOver" class="game-over-message"></p>
@@ -684,7 +785,8 @@
         <h2>Configurações Gerais</h2>
 
         <div class="settings-section">
-            <h3><i class="fas fa-palette"></i> Tema Visual</h3> <div class="setting-option">
+            <h3><i class="fas fa-palette"></i> Tema Visual</h3>
+             <div class="setting-option">
                  <input type="radio" id="themeDark" name="theme" value="dark" onchange="setTheme(this.value)">
                  <label for="themeDark">Escuro</label>
              </div>
@@ -749,12 +851,12 @@
          </div>
 
          <div class="settings-section">
-            <h3><i class="fas fa-info-circle"></i> Sobre</h3>
-            <p><strong>Mega Jogos Pro X+</strong> - Sua central de jogos clássicos e ferramentas!</p>
+             <h3><i class="fas fa-info-circle"></i> Sobre</h3>
+             <p><strong>Mega Jogos Pro X+</strong> - Sua central de jogos clássicos e ferramentas!</p>
              <p>Este site foi aprimorado para incluir mais jogos e opções, além de ser responsivo para funcionar bem em desktops e celulares.</p>
-            <p><em>Nota:</em> Jogos extremamente complexos (como Geometry Dash ou com chefões avançados) estão fora do escopo desta versão.</p>
+             <p><em>Nota:</em> Jogos extremamente complexos (como Geometry Dash ou com chefões avançados) estão fora do escopo desta versão.</p>
              <p id="deviceTypeInfo" style="font-size: 0.9em; color: #bbb; margin-top:10px;"></p>
-        </div>
+         </div>
     </div>
 
 
@@ -773,9 +875,23 @@
         let settings = {}; // Será preenchido com localStorage ou defaults
 
         let activeGameInterval = null; // ID do setInterval do jogo ativo
-        let activeGameTimeout = null; // ID do setTimeout (ex: Jogo da Memória)
+        let activeGameTimeout = null; // ID do setTimeout (ex: Jogo da Memória, CPS Test)
         let activeKeyListener = null;  // Referência à função de listener de teclado ativa
         let activeKeyListeners = {}; // Para jogos com múltiplos listeners (keydown/keyup como Pong)
+        let activeClickListener = null; // Referência ao listener de clique ativo (para CPS Test)
+
+        // --- Element Refs (adicionar novos elementos do CPS Test) ---
+        const cpsTimerEl = document.getElementById('cpsTimer');
+        const cpsClicksEl = document.getElementById('cpsClicks');
+        const cpsClickArea = document.getElementById('cpsClickArea');
+        const cpsStartButton = document.getElementById('cpsStartButton');
+        const cpsStopButton = document.getElementById('cpsStopButton');
+        const cpsResultArea = document.getElementById('cpsResultArea');
+        const cpsTotalClicksEl = document.getElementById('cpsTotalClicks');
+        const cpsTimeElapsedEl = document.getElementById('cpsTimeElapsed');
+        const cpsAverageEl = document.getElementById('cpsAverage');
+        const cpsLevelEl = document.getElementById('cpsLevel');
+        const cpsCommentEl = document.getElementById('cpsComment');
 
 
         /* ========== LocalStorage Management ========== */
@@ -798,7 +914,7 @@
                  settings[key] = value;
                  localStorage.setItem(key, value);
                  console.log(`Setting saved: ${key} = ${value}`);
-            } else {
+             } else {
                  console.warn(`Attempted to save unknown setting: ${key}`);
              }
         }
@@ -807,13 +923,13 @@
         function applyTheme(theme) {
             document.documentElement.classList.remove('theme-dark', 'theme-light');
             document.documentElement.classList.add(theme === 'light' ? 'theme-light' : 'theme-dark');
-             // Atualiza o radio button correspondente
+            // Atualiza o radio button correspondente
             const themeRadio = document.getElementById(theme === 'light' ? 'themeLight' : 'themeDark');
             if (themeRadio) themeRadio.checked = true;
         }
 
         function setTheme(theme) {
-             saveSetting('theme', theme);
+            saveSetting('theme', theme);
             applyTheme(theme);
         }
 
@@ -883,17 +999,33 @@
             }
              // Remover múltiplos listeners (como keydown/keyup do Pong)
              if (Object.keys(activeKeyListeners).length > 0) {
-                  if(activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
-                  if(activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
-                  activeKeyListeners = {};
-                  console.log("Multiple key listeners removed.");
+                 if(activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
+                 if(activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
+                 activeKeyListeners = {};
+                 console.log("Multiple key listeners removed.");
+             }
+             // Remover listener de clique (CPS Test)
+             if (activeClickListener && cpsClickArea) {
+                 cpsClickArea.removeEventListener('click', activeClickListener);
+                 cpsClickArea.onclick = null; // Garante remoção
+                 activeClickListener = null;
+                 console.log("Click listener removed.");
              }
 
+
             // Esconder todas as mensagens de 'Game Over' e 'Win'
-            document.querySelectorAll('.game-over-message, .win-message').forEach(el => {
+            document.querySelectorAll('.game-over-message, .win-message, #cpsResultArea').forEach(el => {
                 el.classList.remove('visible');
-                 el.style.display = 'none'; // Garantir que esteja escondido
+                el.style.display = 'none'; // Garantir que esteja escondido
             });
+
+            // Resetar estado inicial de botões que podem ser desabilitados fora do jogo principal
+            if (cpsClickArea) {
+                cpsClickArea.disabled = true;
+                cpsClickArea.textContent = "Aguardando Início...";
+            }
+             if (cpsStartButton) cpsStartButton.disabled = false;
+             if (cpsStopButton) cpsStopButton.disabled = true;
         }
 
         /* ========== Tab Control ========== */
@@ -917,6 +1049,10 @@
              if (gameName === 'Forca') {
                  const input = document.getElementById('forcaLetter');
                  if (input && !input.disabled) input.focus();
+             }
+             // Preparar o estado inicial do CPS Test ao abrir a aba (sem iniciar)
+             else if (gameName === 'CPSTest') {
+                 resetCPSTestUI();
              }
         }
 
@@ -961,6 +1097,7 @@
             }
             initTicTacToe(); // Inicializar nomes/símbolos do Jogo da Velha
              startWordSearch(false); // Preparar Caça-Palavras sem gerar grid ainda
+             resetCPSTestUI(); // Garante que a UI do CPS Test está no estado inicial
         });
 
 
@@ -978,22 +1115,22 @@
         /* ========== Jogo da Forca (Com Dica e Modo Dupla) ========== */
         let forcaWord = '', forcaHint = '', forcaDisplay = [], forcaWrong = [], forcaMaxErrors = 6, forcaGameOver = false, forcaHintsUsed = 0;
         const forcaWordsWithHints = [ /* ... lista de palavras ... */
-             ["javascript", "Linguagem de script web popular"],
-             ["programacao", "Ato de escrever código para computadores"],
-             ["desenvolvimento", "Processo de criação de software ou sistemas"],
-             ["computador", "Máquina eletrônica que processa dados"],
-             ["tecnologia", "Aplicação do conhecimento científico"],
-             ["algoritmo", "Sequência finita de passos para resolver um problema"],
-             ["interface", "Ponto de interação entre usuário e máquina"],
-             ["aplicativo", "Software projetado para tarefas específicas"],
-             ["internet", "Rede mundial de computadores interconectados"],
-             ["navegador", "Software usado para acessar a World Wide Web"],
-             ["openai", "Empresa de pesquisa em inteligência artificial"],
-             ["python", "Linguagem de programação versátil e legível"],
-             ["react", "Biblioteca JavaScript para construir interfaces de usuário"],
-             ["componente", "Parte reutilizável de uma interface de usuário"],
-             ["framework", "Estrutura de software que facilita o desenvolvimento"],
-             ["debugging", "Processo de encontrar e corrigir erros em código"]
+           ["javascript", "Linguagem de script web popular"],
+           ["programacao", "Ato de escrever código para computadores"],
+           ["desenvolvimento", "Processo de criação de software ou sistemas"],
+           ["computador", "Máquina eletrônica que processa dados"],
+           ["tecnologia", "Aplicação do conhecimento científico"],
+           ["algoritmo", "Sequência finita de passos para resolver um problema"],
+           ["interface", "Ponto de interação entre usuário e máquina"],
+           ["aplicativo", "Software projetado para tarefas específicas"],
+           ["internet", "Rede mundial de computadores interconectados"],
+           ["navegador", "Software usado para acessar a World Wide Web"],
+           ["openai", "Empresa de pesquisa em inteligência artificial"],
+           ["python", "Linguagem de programação versátil e legível"],
+           ["react", "Biblioteca JavaScript para construir interfaces de usuário"],
+           ["componente", "Parte reutilizável de uma interface de usuário"],
+           ["framework", "Estrutura de software que facilita o desenvolvimento"],
+           ["debugging", "Processo de encontrar e corrigir erros em código"]
         ];
         const forcaWordDisplayEl = document.getElementById("forcaWordDisplay");
         const forcaHintDisplayEl = document.getElementById("forcaHintDisplay");
@@ -1005,31 +1142,35 @@
         const forcaLetterInput = document.getElementById("forcaLetter");
 
         function startForcaGame() {
-             clearActiveGame();
-             forcaGameOver = false; forcaHintsUsed = 0; forcaWrong = [];
-             forcaResultEl.innerText = ""; forcaWrongLettersEl.innerText = ""; forcaHintDisplayEl.innerText = "";
-             forcaLetterInput.value = ''; forcaLetterInput.disabled = false;
-             forcaHintButton.style.display = 'none'; forcaHintButton.disabled = false;
+            clearActiveGame(); // Limpa timers/listeners de outros jogos
+            forcaGameOver = false; forcaHintsUsed = 0; forcaWrong = [];
+            forcaResultEl.innerText = ""; forcaWrongLettersEl.innerText = ""; forcaHintDisplayEl.innerText = "";
+            forcaLetterInput.value = ''; forcaLetterInput.disabled = false;
+            forcaHintButton.style.display = 'none'; forcaHintButton.disabled = false;
 
-             const forcaMode = document.getElementById("forcaMode").value;
-             if (forcaMode === "single") {
-                 const randomIndex = Math.floor(Math.random() * forcaWordsWithHints.length);
-                 [forcaWord, forcaHint] = forcaWordsWithHints[randomIndex].map(s => s.toLowerCase());
-                 setupForcaDisplay();
-                 forcaHintButton.style.display = 'inline-block';
-                 if (forcaHint) forcaHintDisplayEl.innerText = `Dica: ${forcaHint}`;
+            const forcaMode = document.getElementById("forcaMode").value;
+            if (forcaMode === "single") {
+                const randomIndex = Math.floor(Math.random() * forcaWordsWithHints.length);
+                [forcaWord, forcaHint] = forcaWordsWithHints[randomIndex].map(s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")); // Normaliza
+                setupForcaDisplay();
+                 if(forcaHint) {
+                     forcaHintDisplayEl.innerText = `Dica: ${forcaHint}`;
+                     forcaHintButton.style.display = 'inline-block'; // Mostra botão de dica só se houver dica
+                 } else {
+                      forcaHintButton.style.display = 'none';
+                 }
                  forcaLetterInput.focus();
-             } else {
-                 forcaWordDisplayEl.innerText = "Modo Dupla: Jogador 1, digite palavra e dica, depois clique 'Iniciar Dupla'.";
-                 forcaLetterInput.disabled = true;
-                 document.getElementById("forcaDuplaInput").style.display = 'inline-block';
-                 forcaCustomWordInput.focus();
-             }
+            } else {
+                forcaWordDisplayEl.innerText = "Modo Dupla: Jogador 1, digite palavra e dica, depois clique 'Iniciar Dupla'.";
+                forcaLetterInput.disabled = true;
+                document.getElementById("forcaDuplaInput").style.display = 'inline-block';
+                forcaCustomWordInput.focus();
+            }
         }
         function startForcaGameDupla() {
              forcaWord = forcaCustomWordInput.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remove acentos
              forcaHint = forcaCustomHintInput.value.trim();
-             if (!forcaWord || !/^[a-zç]+$/.test(forcaWord)) {
+             if (!forcaWord || !/^[a-zç]+$/.test(forcaWord)) { // Permite apenas letras a-z e ç
                  alert("Palavra inválida! Use apenas letras (sem acentos, exceto 'ç')."); return;
              }
              forcaCustomWordInput.value = ''; forcaCustomHintInput.value = '';
@@ -1038,7 +1179,7 @@
              forcaLetterInput.disabled = false; forcaLetterInput.focus();
              forcaResultEl.innerText = `Adivinhe a palavra! ${forcaMaxErrors} tentativas.`;
              if (forcaHint) forcaHintDisplayEl.innerText = `Dica: ${forcaHint}`;
-         }
+        }
         function setupForcaDisplay() {
              forcaDisplay = Array(forcaWord.length).fill("_");
              forcaWordDisplayEl.innerText = forcaDisplay.join(" ");
@@ -1050,26 +1191,26 @@
               if (!forcaDisplay.includes("_")) {
                   forcaResultEl.innerText = `🎉 Parabéns! Você venceu! Palavra: ${forcaWord}`;
                   forcaResultEl.style.color = 'var(--win-color)';
-                  forcaGameOver = true; forcaLetterInput.disabled = true; forcaHintButton.disabled = true;
+                  forcaGameOver = true; forcaLetterInput.disabled = true; if(forcaHintButton) forcaHintButton.disabled = true;
               } else if (remainingAttempts <= 0) {
                   forcaResultEl.innerText = `❌ Fim de jogo! Perdeu. Palavra era: ${forcaWord}`;
-                   forcaResultEl.style.color = 'var(--error-color)';
+                  forcaResultEl.style.color = 'var(--error-color)';
                   forcaWordDisplayEl.innerText = forcaWord.split('').join(' ');
-                  forcaGameOver = true; forcaLetterInput.disabled = true; forcaHintButton.disabled = true;
+                  forcaGameOver = true; forcaLetterInput.disabled = true; if(forcaHintButton) forcaHintButton.disabled = true;
               } else {
-                   forcaResultEl.innerText = `Você tem ${remainingAttempts} tentativa(s) restante(s).`;
-                   forcaResultEl.style.color = 'var(--text-color)'; // Reset color
+                 forcaResultEl.innerText = `Você tem ${remainingAttempts} tentativa(s) restante(s).`;
+                 forcaResultEl.style.color = 'var(--text-color)'; // Reset color
               }
         }
         function guessLetter() { /* ... (igual ao anterior, mas com foco) ... */
              if (forcaGameOver || !forcaWord) return;
-             let letter = forcaLetterInput.value.toLowerCase();
+             let letter = forcaLetterInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normaliza
              forcaLetterInput.value = ""; forcaLetterInput.focus(); // Limpa e foca
              if (letter.length !== 1 || !/[a-zç]/.test(letter)) {
                   forcaResultEl.innerText = "Digite uma única letra válida (a-z ou ç)."; return;
              }
              if (forcaDisplay.includes(letter) || forcaWrong.includes(letter)) {
-                   forcaResultEl.innerText = `Letra '${letter}' já foi tentada.`; return;
+                  forcaResultEl.innerText = `Letra '${letter}' já foi tentada.`; return;
              }
              let hit = false;
              for (let i = 0; i < forcaWord.length; i++) {
@@ -1084,7 +1225,7 @@
         }
         function giveForcaHint() { /* ... (igual ao anterior) ... */
              if (forcaGameOver || forcaHintsUsed >= 1 || document.getElementById("forcaMode").value !== 'single') {
-                 forcaHintButton.disabled = true;
+                 if(forcaHintButton) forcaHintButton.disabled = true;
                   if (forcaHintsUsed >= 1) forcaResultEl.innerText = "Você já usou sua dica!";
                   return;
              }
@@ -1098,11 +1239,11 @@
                  for(let i=0; i<forcaWord.length; i++) { if(forcaWord[i] === hintLetter && forcaDisplay[i] === '_') forcaDisplay[i] = hintLetter; }
                  forcaWordDisplayEl.innerText = forcaDisplay.join(" ");
                  forcaResultEl.innerText = `Dica usada! Letra '${hintLetter}' revelada.`;
-                 forcaHintButton.disabled = true;
+                 if(forcaHintButton) forcaHintButton.disabled = true;
                  updateForcaStatus();
              } else {
                   forcaResultEl.innerText = "Dica não disponível (poucas letras restantes).";
-                  forcaHintButton.disabled = true;
+                  if(forcaHintButton) forcaHintButton.disabled = true;
              }
         }
         function toggleForcaDupla() { /* ... (igual ao anterior) ... */
@@ -1114,7 +1255,7 @@
 
 
         /* ========== Jogo da Velha (Com mais símbolos e game over melhorado) ========== */
-        let ticTacToeBoard, currentPlayerSymbol, player1Name, player2Name, player1Symbol, player2Symbol, ticTacToeGameOver;
+        let ticTacToeBoard, currentPlayerSymbol, player1Name, player2Name, player1Symbol, player2Symbol, ticTacToeGameOverState; // Renomeado para evitar conflito
         const ticTacToeCells = document.querySelectorAll("#ticTacToe td");
         const ticTacToeResultEl = document.getElementById("ticTacToeResult");
         const ticTacToeGameOverEl = document.getElementById("ticTacToeGameOver");
@@ -1127,7 +1268,7 @@
              availableP2Symbols = ticTacToeSymbols.filter(s => s !== player1Symbol);
              player2Symbol = availableP2Symbols[0]; // Pega o primeiro disponível como padrão
              player2SymbolDisplay.textContent = `(${player2Symbol})`; // Mostra o símbolo do P2 (não selecionável diretamente)
-         }
+        }
 
         function initTicTacToe() {
              player1Name = player1NameInput.value.trim() || "Jogador 1";
@@ -1136,7 +1277,7 @@
 
              ticTacToeBoard = [["", "", ""], ["", "", ""], ["", "", ""]];
              currentPlayerSymbol = player1Symbol;
-             ticTacToeGameOver = false;
+             ticTacToeGameOverState = false;
              ticTacToeGameOverEl.classList.remove('visible'); // Esconde mensagem de fim de jogo
              ticTacToeGameOverEl.style.display = 'none'; // Garante display none
              ticTacToeResultEl.style.display = 'block'; // Mostra status
@@ -1151,42 +1292,42 @@
              updateTicTacToeStatus();
         }
         function startTicTacToeWithSettings() { initTicTacToe(); } // Apenas reinicia com os nomes/símbolos atuais
-        function updateTicTacToeStatus() { if (ticTacToeGameOver) return; const currentPlayerName = (currentPlayerSymbol === player1Symbol) ? player1Name : player2Name; ticTacToeResultEl.innerText = `Vez de ${currentPlayerName} (${currentPlayerSymbol})`; }
+        function updateTicTacToeStatus() { if (ticTacToeGameOverState) return; const currentPlayerName = (currentPlayerSymbol === player1Symbol) ? player1Name : player2Name; ticTacToeResultEl.innerText = `Vez de ${currentPlayerName} (${currentPlayerSymbol})`; }
         function makeMove(cell, row, col) { /* ... (igual, mas com display toggle) ... */
-             if (ticTacToeGameOver || ticTacToeBoard[row][col] !== "") return;
-             ticTacToeBoard[row][col] = currentPlayerSymbol; cell.innerText = currentPlayerSymbol; cell.onclick = null;
+             if (ticTacToeGameOverState || ticTacToeBoard[row][col] !== "") return;
+             ticTacToeBoard[row][col] = currentPlayerSymbol; cell.innerText = currentPlayerSymbol; cell.onclick = null; // Desativa clique após jogada
              if (checkTicTacToeWinner(row, col)) {
                  const winnerName = (currentPlayerSymbol === player1Symbol) ? player1Name : player2Name;
                  ticTacToeResultEl.style.display = 'none'; // Esconde status
                  ticTacToeGameOverEl.innerText = `🎉 ${winnerName} (${currentPlayerSymbol}) venceu!`;
                   ticTacToeGameOverEl.style.display = 'block'; // Mostra fim de jogo
-                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOver = true; highlightWinningCells();
+                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOverState = true; highlightWinningCells();
              } else if (isBoardFull()) {
                  ticTacToeResultEl.style.display = 'none';
                  ticTacToeGameOverEl.innerText = "😐 Empate!";
                  ticTacToeGameOverEl.style.display = 'block';
-                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOver = true;
+                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOverState = true;
              } else {
                  currentPlayerSymbol = (currentPlayerSymbol === player1Symbol) ? player2Symbol : player1Symbol; updateTicTacToeStatus();
              }
         }
         function checkTicTacToeWinner(row, col) { /* ... (lógica igual) ... */
-              const symbol = ticTacToeBoard[row][col]; if (!symbol) return false;
-              // Check row
-              if (ticTacToeBoard[row][0] === symbol && ticTacToeBoard[row][1] === symbol && ticTacToeBoard[row][2] === symbol) return true;
-              // Check column
-              if (ticTacToeBoard[0][col] === symbol && ticTacToeBoard[1][col] === symbol && ticTacToeBoard[2][col] === symbol) return true;
-              // Check diagonals
-              if (row === col && ticTacToeBoard[0][0] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][2] === symbol) return true;
-              if (row + col === 2 && ticTacToeBoard[0][2] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][0] === symbol) return true;
-              return false;
+             const symbol = ticTacToeBoard[row][col]; if (!symbol) return false;
+             // Check row
+             if (ticTacToeBoard[row][0] === symbol && ticTacToeBoard[row][1] === symbol && ticTacToeBoard[row][2] === symbol) return true;
+             // Check column
+             if (ticTacToeBoard[0][col] === symbol && ticTacToeBoard[1][col] === symbol && ticTacToeBoard[2][col] === symbol) return true;
+             // Check diagonals
+             if (row === col && ticTacToeBoard[0][0] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][2] === symbol) return true;
+             if (row + col === 2 && ticTacToeBoard[0][2] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][0] === symbol) return true;
+             return false;
         }
         function isBoardFull() { return ticTacToeBoard.flat().every(cell => cell !== ""); }
         function highlightWinningCells() { /* ... (lógica igual) ... */
              const symbol = currentPlayerSymbol;
              const winningCombinations = [ [[0,0],[0,1],[0,2]],[[1,0],[1,1],[1,2]],[[2,0],[2,1],[2,2]], [[0,0],[1,0],[2,0]],[[0,1],[1,1],[2,1]],[[0,2],[1,2],[2,2]], [[0,0],[1,1],[2,2]],[[0,2],[1,1],[2,0]] ];
              for (const combination of winningCombinations) { const [a,b,c] = combination; if(ticTacToeBoard[a[0]][a[1]] === symbol && ticTacToeBoard[b[0]][b[1]] === symbol && ticTacToeBoard[c[0]][c[1]] === symbol) { combination.forEach(([r, c]) => { document.querySelector("#ticTacToe table").rows[r].cells[c].classList.add('win-cell'); }); break; } }
-         }
+        }
         function resetTicTacToe() { initTicTacToe(); } // Mudamos o botão para chamar init diretamente
         player1SymbolSelect.addEventListener('change', updateP2SymbolOptions);
 
@@ -1208,7 +1349,7 @@
          }
 
         function startWordSearch(generate = true) { // Parâmetro para controlar geração
-             clearActiveGame();
+             clearActiveGame(); // Limpa listeners anteriores (mouseup global)
               WS_GRID_SIZE = parseInt(settings.wordSearchSize) || 12; // Usa o tamanho da configuração
              if (generate) {
                  wordSearchWords = getRandomWords(wordSearchThemes[currentWordSearchTheme], Math.floor(WS_GRID_SIZE * 0.8)); // Seleciona palavras aleatórias do tema
@@ -1216,45 +1357,47 @@
                  placeWords();
                  displayWordSearch();
              } else {
-                  // Apenas prepara a interface se não for para gerar
+                 // Apenas prepara a interface se não for para gerar
                   wordSearchGridEl.innerHTML = '<p>Escolha um tema e clique em "Gerar".</p>';
                   wordSearchListEl.innerHTML = '';
                   wordSearchResultEl.textContent = '';
              }
         }
          function getRandomWords(wordList, count) {
-              const shuffled = [...wordList].sort(() => 0.5 - Math.random());
-              return shuffled.slice(0, count);
+             const shuffled = [...wordList].sort(() => 0.5 - Math.random());
+             // Filtra palavras que cabem no grid
+             const fittingWords = shuffled.filter(word => word.length <= WS_GRID_SIZE);
+             return fittingWords.slice(0, count);
          }
         function generateGrid() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
              wordSearchGrid = []; const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÇ"; // Adiciona Ç
-             for (let r = 0; r < WS_GRID_SIZE; r++) { wordSearchGrid[r] = []; for (let c = 0; c < WS_GRID_SIZE; c++) { wordSearchGrid[r][c] = { letter: letters[Math.floor(Math.random() * letters.length)], found: false }; } }
+             for (let r = 0; r < WS_GRID_SIZE; r++) { wordSearchGrid[r] = []; for (let c = 0; c < WS_GRID_SIZE; c++) { wordSearchGrid[r][c] = { letter: letters[Math.floor(Math.random() * letters.length)], found: false, word: null }; } } // Inicializa word como null
         }
         function placeWords() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
              const directions = [ { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: -1, dc: 0 }, { dr: 1, dc: 1 }, { dr: 1, dc: -1 }, { dr: -1, dc: 1 }, { dr: -1, dc: -1 } ];
              wordSearchWords.forEach(word => { let placed = false; let attempts = 0; while (!placed && attempts < 100) { attempts++; const dir = directions[Math.floor(Math.random() * directions.length)]; const startRow = Math.floor(Math.random() * WS_GRID_SIZE); const startCol = Math.floor(Math.random() * WS_GRID_SIZE); let canPlace = true; const cellsToPlace = []; for (let i = 0; i < word.length; i++) { const r = startRow + i * dir.dr; const c = startCol + i * dir.dc; if (r < 0 || r >= WS_GRID_SIZE || c < 0 || c >= WS_GRID_SIZE || (wordSearchGrid[r][c].word && wordSearchGrid[r][c].letter !== word[i])) { // Verifica se já tem palavra OU letra diferente
-                  canPlace = false; break; } cellsToPlace.push({ r, c, letter: word[i] }); } if (canPlace) { cellsToPlace.forEach(info => { wordSearchGrid[info.r][info.c] = { letter: info.letter, found: false, word: word }; }); placed = true; } } if (!placed) console.warn(`Could not place word: ${word}`); });
+              canPlace = false; break; } cellsToPlace.push({ r, c, letter: word[i] }); } if (canPlace) { cellsToPlace.forEach(info => { wordSearchGrid[info.r][info.c] = { letter: info.letter, found: false, word: word }; }); placed = true; } } if (!placed) console.warn(`Could not place word: ${word}`); });
         }
         function displayWordSearch() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
-              let html = "<table>";
-              // Ajusta o tamanho da fonte baseado no tamanho do grid
-              const fontSize = WS_GRID_SIZE > 13 ? '0.8em' : (WS_GRID_SIZE < 12 ? '1.1em' : '1em');
-              const cellSize = WS_GRID_SIZE > 13 ? '25px' : (WS_GRID_SIZE < 12 ? '35px' : '30px');
+             let html = "<table>";
+             // Ajusta o tamanho da fonte baseado no tamanho do grid
+             const fontSize = WS_GRID_SIZE > 13 ? '0.8em' : (WS_GRID_SIZE < 12 ? '1.1em' : '1em');
+             const cellSize = WS_GRID_SIZE > 13 ? '25px' : (WS_GRID_SIZE < 12 ? '35px' : '30px');
 
-              for (let r = 0; r < WS_GRID_SIZE; r++) { html += "<tr>"; for (let c = 0; c < WS_GRID_SIZE; c++) { html += `<td data-row="${r}" data-col="${c}" style="width:${cellSize}; height:${cellSize}; font-size:${fontSize};">${wordSearchGrid[r][c].letter}</td>`; } html += "</tr>"; } html += "</table>";
-              wordSearchGridEl.innerHTML = html;
-              const cells = wordSearchGridEl.querySelectorAll('td'); cells.forEach(cell => { cell.addEventListener('mousedown', handleMouseDown); cell.addEventListener('mouseover', handleMouseOver); });
-              // Adiciona listener global para mouseup para evitar problemas se soltar fora do grid
-              document.removeEventListener('mouseup', handleMouseUp); // Remove anterior se houver
-              document.addEventListener('mouseup', handleMouseUp);
-              wordSearchListEl.innerHTML = ""; foundWords = [];
-              wordSearchWords.sort().forEach(word => { const li = document.createElement('li'); li.textContent = word; li.id = `word-${word}`; wordSearchListEl.appendChild(li); });
-              wordSearchResultEl.textContent = "Encontre as palavras!";
-         }
-        function handleMouseDown(event) { if (event.target.tagName !== 'TD') return; isSelecting = true; clearSelection(); selectCell(event.target); event.preventDefault(); }
-        function handleMouseOver(event) { if (isSelecting && event.target.tagName === 'TD') { selectCell(event.target); } }
+             for (let r = 0; r < WS_GRID_SIZE; r++) { html += "<tr>"; for (let c = 0; c < WS_GRID_SIZE; c++) { html += `<td data-row="${r}" data-col="${c}" style="width:${cellSize}; height:${cellSize}; font-size:${fontSize};">${wordSearchGrid[r][c].letter}</td>`; } html += "</tr>"; } html += "</table>";
+             wordSearchGridEl.innerHTML = html;
+             const cells = wordSearchGridEl.querySelectorAll('td'); cells.forEach(cell => { cell.addEventListener('mousedown', handleMouseDown); cell.addEventListener('mouseover', handleMouseOver); });
+             // Adiciona listener global para mouseup para evitar problemas se soltar fora do grid
+             document.removeEventListener('mouseup', handleMouseUp); // Remove anterior se houver
+             document.addEventListener('mouseup', handleMouseUp);
+             wordSearchListEl.innerHTML = ""; foundWords = [];
+             wordSearchWords.sort().forEach(word => { const li = document.createElement('li'); li.textContent = word; li.id = `word-${word}`; wordSearchListEl.appendChild(li); });
+             wordSearchResultEl.textContent = "Encontre as palavras!";
+        }
+        function handleMouseDown(event) { if (event.target.tagName !== 'TD' || event.target.classList.contains('found')) return; isSelecting = true; clearSelection(); selectCell(event.target); event.preventDefault(); }
+        function handleMouseOver(event) { if (isSelecting && event.target.tagName === 'TD' && !event.target.classList.contains('found')) { selectCell(event.target); } }
         function handleMouseUp() { if (isSelecting) { isSelecting = false; checkSelectedWord(); } }
-        function selectCell(cell) { if (!cell || cell.classList.contains('found') || cell.classList.contains('selecting')) return; const row = parseInt(cell.dataset.row); const col = parseInt(cell.dataset.col); cell.classList.add('selecting'); selectedCells.push({ cell, row, col }); }
+        function selectCell(cell) { if (!cell || cell.classList.contains('found') || selectedCells.find(sc => sc.cell === cell)) return; const row = parseInt(cell.dataset.row); const col = parseInt(cell.dataset.col); cell.classList.add('selecting'); selectedCells.push({ cell, row, col }); }
         function clearSelection() { selectedCells.forEach(sc => sc.cell.classList.remove('selecting')); selectedCells = []; }
         function checkSelectedWord() { /* ... (lógica igual) ... */
              if (selectedCells.length < 2) { clearSelection(); return; }
@@ -1263,10 +1406,12 @@
              let wordFound = null;
              for (const word of wordSearchWords) { if (!foundWords.includes(word) && (selectedString === word || selectedStringReversed === word)) { wordFound = word; break; } }
              if (wordFound) { markWordAsFound(wordFound); } else { clearSelection(); }
-         }
+        }
         function markWordAsFound(word) { /* ... (lógica igual) ... */
-             foundWords.push(word); selectedCells.forEach(sc => { sc.cell.classList.remove('selecting'); sc.cell.classList.add('found'); wordSearchGrid[sc.row][sc.col].found = true; }); const listItem = document.getElementById(`word-${word}`); if (listItem) { listItem.classList.add('found'); } selectedCells = []; if (foundWords.length === wordSearchWords.length) { wordSearchResultEl.textContent = "🎉 Parabéns! Todas as palavras encontradas!"; } else { wordSearchResultEl.textContent = `"${word}" encontrada! Continue...`; }
-         }
+             foundWords.push(word); selectedCells.forEach(sc => { sc.cell.classList.remove('selecting'); sc.cell.classList.add('found'); wordSearchGrid[sc.row][sc.col].found = true; }); const listItem = document.getElementById(`word-${word}`); if (listItem) { listItem.classList.add('found'); } selectedCells = []; if (foundWords.length === wordSearchWords.length) { wordSearchResultEl.textContent = "🎉 Parabéns! Todas as palavras encontradas!"; // Limpa listener global de mouseup
+                 document.removeEventListener('mouseup', handleMouseUp);
+             } else { wordSearchResultEl.textContent = `"${word}" encontrada! Continue...`; }
+        }
 
 
          /* ========== Jogo da Memória (NOVO) ========== */
@@ -1274,7 +1419,8 @@
          const memoryMovesEl = document.getElementById('memoryMoves');
          const memoryMatchesEl = document.getElementById('memoryMatches');
          const memoryResultEl = document.getElementById('memoryResult');
-         const memorySymbols = ['🍎', '🍌', '🍇', '🍓', '🥝', '🍍', '🍒', '🍉', '🍋', '🍊', '🍑', '🥭']; // 12 pares = 24 cartas
+         const memorySymbols = ['🍎', '🍌', '🍇', '🍓', '🥝', '🍍', '🍒', '🍉']; // 8 pares = 16 cartas (ajustado)
+         // const memorySymbols = ['🍎', '🍌', '🍇', '🍓', '🥝', '🍍', '🍒', '🍉', '🍋', '🍊', '🍑', '🥭']; // 12 pares = 24 cartas
          let memoryCards = [];
          let flippedCards = [];
          let matchedPairs = 0;
@@ -1287,7 +1433,8 @@
              flippedCards = [];
              memoryMovesEl.textContent = moves;
              memoryMatchesEl.textContent = matchedPairs;
-              memoryResultEl.style.display = 'none'; // Esconde mensagem de vitória
+             memoryResultEl.classList.remove('visible'); // Esconde mensagem de vitória
+             memoryResultEl.style.display = 'none';
 
              // Duplica e embaralha os símbolos
              const gameSymbols = [...memorySymbols, ...memorySymbols];
@@ -1313,6 +1460,7 @@
          function flipCard() {
              if (memoryLockBoard) return; // Ignora clique se o tabuleiro estiver travado
              if (this === flippedCards[0]) return; // Ignora clique na mesma carta já virada
+             if (this.classList.contains('flipped') || this.classList.contains('matched')) return; // Ignora clique em carta já virada ou encontrada
 
              this.classList.add('flipped');
              flippedCards.push(this);
@@ -1348,6 +1496,7 @@
              // Verificar condição de vitória
              if (matchedPairs === memorySymbols.length) {
                   memoryResultEl.textContent = `🎉 Parabéns! Você encontrou todos os pares em ${moves} movimentos!`;
+                  memoryResultEl.classList.add('visible');
                   memoryResultEl.style.display = 'block';
                  clearActiveGame(); // Limpa timeouts pendentes se houver
              }
@@ -1373,12 +1522,161 @@
 
 
 
+         /* ========== NOVO: Lógica do Teste de CPS ========== */
+        let cpsClicks = 0;
+        let cpsTimerValue = 60; // Tempo inicial em segundos
+        let cpsTestRunning = false;
+        let cpsIntervalId = null; // Guarda o ID do setInterval
+
+        function resetCPSTestUI() {
+             if (!cpsTimerEl || !cpsClicksEl || !cpsClickArea || !cpsStartButton || !cpsStopButton || !cpsResultArea) {
+                 console.error("Elementos do CPS Test não encontrados!");
+                 return;
+             }
+             cpsTimerEl.textContent = '60';
+             cpsClicksEl.textContent = '0';
+             cpsClickArea.disabled = true;
+             cpsClickArea.textContent = "Aguardando Início...";
+             cpsStartButton.disabled = false;
+             cpsStopButton.disabled = true;
+             cpsResultArea.style.display = 'none';
+             cpsResultArea.classList.remove('visible');
+        }
+
+        function handleCPSClick() {
+             if (!cpsTestRunning) return;
+             cpsClicks++;
+             cpsClicksEl.textContent = cpsClicks;
+             // Pequeno efeito visual no botão
+             cpsClickArea.style.transform = 'scale(0.98)';
+             setTimeout(() => {
+                 if(cpsClickArea) cpsClickArea.style.transform = 'scale(1)';
+             } , 50);
+        }
+
+        function updateCPSTimer() {
+             cpsTimerValue--;
+             cpsTimerEl.textContent = cpsTimerValue;
+             if (cpsTimerValue <= 0) {
+                 stopCPSTest();
+             }
+        }
+
+        function calculateCPSResult() {
+            const timeElapsed = 60 - cpsTimerValue;
+            if (timeElapsed <= 0) { // Evita divisão por zero se parar imediatamente
+                 cpsAverageEl.textContent = "0.00";
+                 cpsLevelEl.textContent = "Nenhum";
+                 cpsLevelEl.className = ''; // Remove classes de nível
+                 cpsCommentEl.textContent = "Você nem tentou!";
+                 return;
+            }
+
+            const cps = (cpsClicks / timeElapsed).toFixed(2);
+            cpsTotalClicksEl.textContent = cpsClicks;
+            cpsTimeElapsedEl.textContent = timeElapsed;
+            cpsAverageEl.textContent = cps;
+
+            let level = "Nenhum";
+            let comment = "";
+            let levelClass = "";
+
+            if (cps < 4) {
+                level = "Zumbi Lento";
+                comment = "Precisa praticar mais para o PvP!";
+                levelClass = "level-lento";
+            } else if (cps < 7) {
+                level = "Esqueleto Arqueiro";
+                comment = "Razoável, mas cuidado com os Pro Players.";
+                levelClass = "level-medio";
+            } else if (cps < 10) {
+                level = "Creeper Explosivo";
+                comment = "Bom ritmo! Você já consegue surpreender no combate.";
+                levelClass = "level-rapido";
+            } else if (cps < 14) {
+                level = "Jogador Pro";
+                comment = "Excelente! Seus cliques são rápidos e precisos.";
+                levelClass = "level-pro";
+            } else {
+                level = "Hacker??";
+                comment = "Uau! Seus cliques são sobre-humanos! 🤖";
+                levelClass = "level-hacker";
+            }
+
+            cpsLevelEl.textContent = level;
+            cpsLevelEl.className = levelClass; // Aplica a classe de cor
+            cpsCommentEl.textContent = comment;
+        }
+
+        function startCPSTest() {
+            console.log("Starting CPS Test...");
+            clearActiveGame(); // Limpa timers e listeners de outros jogos
+
+            cpsClicks = 0;
+            cpsTimerValue = 60;
+            cpsTestRunning = true;
+
+            // Atualiza UI inicial
+            cpsClicksEl.textContent = cpsClicks;
+            cpsTimerEl.textContent = cpsTimerValue;
+            cpsResultArea.style.display = 'none';
+            cpsResultArea.classList.remove('visible');
+            cpsClickArea.disabled = false;
+            cpsClickArea.textContent = "Clique Aqui!";
+            cpsStartButton.disabled = true;
+            cpsStopButton.disabled = false;
+
+            // Adiciona listener de clique
+            activeClickListener = handleCPSClick; // Guarda a referência
+            cpsClickArea.addEventListener('click', activeClickListener);
+
+
+            // Inicia o timer
+            cpsIntervalId = setInterval(updateCPSTimer, 1000);
+            activeGameInterval = cpsIntervalId; // Registra para clearActiveGame funcionar
+
+             cpsClickArea.focus(); // Foca no botão para facilitar início
+        }
+
+        function stopCPSTest() {
+            if (!cpsTestRunning) return; // Não faz nada se já parou
+            console.log("Stopping CPS Test...");
+            cpsTestRunning = false;
+
+            // Limpa o timer
+            clearInterval(cpsIntervalId);
+            activeGameInterval = null;
+
+            // Desabilita controles
+            cpsClickArea.disabled = true;
+            cpsClickArea.textContent = "Tempo Esgotado!";
+            cpsStartButton.disabled = false; // Reabilita o start
+            cpsStopButton.disabled = true;
+
+            // Remove listener
+            if (activeClickListener && cpsClickArea) {
+                cpsClickArea.removeEventListener('click', activeClickListener);
+                activeClickListener = null;
+            }
+
+            // Calcula e mostra resultado
+            calculateCPSResult();
+            cpsResultArea.style.display = 'block';
+            cpsResultArea.classList.add('visible');
+        }
+
+
         /* ========== Tetris (Com Preview e Dificuldade) ========== */
-        const tetrisCanvas = document.getElementById('tetrisCanvas'); const tetrisCtx = tetrisCanvas.getContext('2d');
-        const nextPieceCanvas = document.getElementById('tetrisNextPiece'); const nextPieceCtx = nextPieceCanvas.getContext('2d');
+        const tetrisCanvas = document.getElementById('tetrisCanvas'); const tetrisCtx = tetrisCanvas?.getContext('2d'); // Add null check
+        const nextPieceCanvas = document.getElementById('tetrisNextPiece'); const nextPieceCtx = nextPieceCanvas?.getContext('2d'); // Add null check
         const tetrisScoreEl = document.getElementById('tetrisScore'); const tetrisGameOverEl = document.getElementById('tetrisGameOver');
-        const tetrisBlockSize = 24; const tetrisBoardWidth = tetrisCanvas.width / tetrisBlockSize; const tetrisBoardHeight = tetrisCanvas.height / tetrisBlockSize;
-        let tetrisBoard, currentPiece, nextPiece, currentX, currentY, tetrisScore, tetrisGameOver, dropSpeed, initialDropSpeed;
+        const tetrisBlockSize = 24;
+        let tetrisBoardWidth = 10, tetrisBoardHeight = 20; // Default values if canvas not ready
+        if (tetrisCanvas) {
+             tetrisBoardWidth = tetrisCanvas.width / tetrisBlockSize;
+             tetrisBoardHeight = tetrisCanvas.height / tetrisBlockSize;
+        }
+        let tetrisBoard, currentPiece, nextPiece, currentX, currentY, tetrisScore, tetrisGameOverState, dropSpeed, initialDropSpeed; // Renomeado tetrisGameOver para evitar conflito
         const TETRIS_PIECES = [ /* ... (peças iguais) ... */ { shape: [[1,1,1,1]], color: '#00f0f0' }, { shape: [[1,1,0],[0,1,1]], color: '#00f000' }, { shape: [[0,1,1],[1,1,0]], color: '#f00000' }, { shape: [[1,1,1],[0,1,0]], color: '#a000f0' }, { shape: [[1,1],[1,1]], color: '#f0f000' }, { shape: [[1,0,0],[1,1,1]], color: '#0000f0' }, { shape: [[0,0,1],[1,1,1]], color: '#f0a000' } ];
         function createEmptyBoard() { return Array.from({ length: tetrisBoardHeight }, () => Array(tetrisBoardWidth).fill(0)); }
         function getRandomTetrisPiece() { const index = Math.floor(Math.random() * TETRIS_PIECES.length); return JSON.parse(JSON.stringify(TETRIS_PIECES[index])); }
@@ -1386,66 +1684,76 @@
              currentPiece = nextPiece || getRandomTetrisPiece(); nextPiece = getRandomTetrisPiece();
              currentX = Math.floor(tetrisBoardWidth / 2) - Math.ceil(currentPiece.shape[0].length / 2); currentY = 0;
              drawNextPiece();
-             if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { tetrisGameOver = true; }
-         }
+             if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { tetrisGameOverState = true; }
+        }
         function checkTetrisCollision(pieceShape, x, y, board) { /* ... (igual) ... */
-             for (let r = 0; r < pieceShape.length; r++) { for (let c = 0; c < pieceShape[r].length; c++) { if (pieceShape[r][c]) { const boardX = x + c; const boardY = y + r; if (boardX < 0 || boardX >= tetrisBoardWidth || boardY >= tetrisBoardHeight || (boardY >= 0 && board[boardY] && board[boardY][boardX] !== 0)) return true; } } } return false;
-         }
+             for (let r = 0; r < pieceShape.length; r++) { for (let c = 0; c < pieceShape[r].length; c++) { if (pieceShape[r][c]) { const boardX = x + c; const boardY = y + r; if (boardX < 0 || boardX >= tetrisBoardWidth || boardY >= tetrisBoardHeight || (boardY >= 0 && board && board[boardY] && board[boardY][boardX] !== 0)) return true; } } } return false;
+        }
         function freezeTetrisPiece() { /* ... (igual) ... */
-             const shape = currentPiece.shape; const color = currentPiece.color; for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { const boardX = currentX + c; const boardY = currentY + r; if (boardY >= 0 && boardY < tetrisBoardHeight && boardX >= 0 && boardX < tetrisBoardWidth) { tetrisBoard[boardY][boardX] = color; } else if (boardY < 0) { tetrisGameOver = true; return; } } } }
-         }
+             const shape = currentPiece.shape; const color = currentPiece.color; for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { const boardX = currentX + c; const boardY = currentY + r; if (boardY >= 0 && boardY < tetrisBoardHeight && boardX >= 0 && boardX < tetrisBoardWidth && tetrisBoard && tetrisBoard[boardY]) { tetrisBoard[boardY][boardX] = color; } else if (boardY < 0) { tetrisGameOverState = true; return; } } } }
+        }
         function clearTetrisLines() { /* ... (igual, mas acelera o jogo) ... */
              let linesCleared = 0;
-             for (let r = tetrisBoardHeight - 1; r >= 0; r--) { if (tetrisBoard[r].every(cell => cell !== 0)) { linesCleared++; tetrisBoard.splice(r, 1); tetrisBoard.unshift(Array(tetrisBoardWidth).fill(0)); r++; } }
+             for (let r = tetrisBoardHeight - 1; r >= 0; r--) { if (tetrisBoard && tetrisBoard[r] && tetrisBoard[r].every(cell => cell !== 0)) { linesCleared++; tetrisBoard.splice(r, 1); tetrisBoard.unshift(Array(tetrisBoardWidth).fill(0)); r++; } }
              if (linesCleared > 0) { let points = [0, 100, 300, 500, 800]; tetrisScore += points[linesCleared] || 0; tetrisScoreEl.textContent = tetrisScore;
                  // Acelera o jogo a cada X pontos ou linhas
-                 if (tetrisScore % 500 === 0 && dropSpeed > 200) { // Ex: acelera a cada 500 pontos
+                 if (tetrisScore % 500 === 0 && dropSpeed > 200 && activeGameInterval) { // Ex: acelera a cada 500 pontos
                       dropSpeed = Math.max(200, dropSpeed * 0.9); // Reduz intervalo, mínimo 200ms
                       clearInterval(activeGameInterval); // Limpa intervalo antigo
                       activeGameInterval = setInterval(tetrisGameLoop, dropSpeed); // Cria novo com velocidade atualizada
                       console.log("Tetris speed increased! New interval:", dropSpeed);
                  }
-              }
-         }
+             }
+        }
         function rotateTetrisPiece() { /* ... (igual) ... */
-             if (tetrisGameOver) return; const shape = currentPiece.shape; const N = shape.length; const M = shape[0].length; const newShape = Array.from({ length: M }, () => Array(N).fill(0)); for (let r = 0; r < N; r++) { for (let c = 0; c < M; c++) { if (shape[r][c]) newShape[c][N - 1 - r] = shape[r][c]; } } const oldShape = currentPiece.shape; currentPiece.shape = newShape; if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { currentPiece.shape = oldShape; }
+             if (tetrisGameOverState) return; const shape = currentPiece.shape; const N = shape.length; const M = shape[0].length; const newShape = Array.from({ length: M }, () => Array(N).fill(0)); for (let r = 0; r < N; r++) { for (let c = 0; c < M; c++) { if (shape[r][c]) newShape[c][N - 1 - r] = shape[r][c]; } } const oldShape = currentPiece.shape; currentPiece.shape = newShape; if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { currentPiece.shape = oldShape; }
         }
         function moveTetrisPiece(dx, dy) { /* ... (igual) ... */
-             if (tetrisGameOver) return false; const newX = currentX + dx; const newY = currentY + dy; if (!checkTetrisCollision(currentPiece.shape, newX, newY, tetrisBoard)) { currentX = newX; currentY = newY; return true; } return false;
+             if (tetrisGameOverState) return false; const newX = currentX + dx; const newY = currentY + dy; if (!checkTetrisCollision(currentPiece.shape, newX, newY, tetrisBoard)) { currentX = newX; currentY = newY; return true; } return false;
         }
         function tetrisGameLoop() { /* ... (igual, usa display toggle) ... */
-              if (tetrisGameOver) {
-                  clearInterval(activeGameInterval); activeGameInterval = null;
-                   tetrisGameOverEl.style.display = 'block'; // Mostra mensagem
-                  tetrisGameOverEl.classList.add('visible');
-                  if (activeKeyListener) { document.removeEventListener('keydown', activeKeyListener); activeKeyListener = null; }
-                  console.log("Tetris Over! Score:", tetrisScore); return;
-              }
-              if (!moveTetrisPiece(0, 1)) {
-                   freezeTetrisPiece();
-                   if (tetrisGameOver) { drawTetris(); tetrisGameLoop(); return; } // Verifica game over após congelar
-                   clearTetrisLines(); spawnNewTetrisPiece();
-                   if (tetrisGameOver) { drawTetrisBoard(); tetrisGameLoop(); return; } // Verifica game over após spawn
-              }
-              drawTetris();
-         }
-        function drawTetris() { /* ... (igual) ... */ tetrisCtx.fillStyle = '#000'; tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height); drawTetrisBoard(); drawTetrisPieceShape(tetrisCtx, currentPiece.shape, currentX, currentY, currentPiece.color, tetrisBlockSize); }
-        function drawTetrisBoard() { /* ... (igual) ... */ for (let r = 0; r < tetrisBoardHeight; r++) { for (let c = 0; c < tetrisBoardWidth; c++) { if (tetrisBoard[r][c] !== 0) { drawTetrisBlock(tetrisCtx, c, r, tetrisBoard[r][c], tetrisBlockSize); } } } }
-        function drawTetrisPieceShape(ctx, shape, xOffset, yOffset, color, blockSize) { /* ... (igual) ... */ for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { drawTetrisBlock(ctx, xOffset + c, yOffset + r, color, blockSize); } } } }
-        function drawTetrisBlock(ctx, gridX, gridY, color, blockSize) { /* ... (igual) ... */ if (gridY < 0) return; const x = gridX * blockSize; const y = gridY * blockSize; ctx.fillStyle = color; ctx.fillRect(x, y, blockSize, blockSize); ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; ctx.strokeRect(x, y, blockSize, blockSize); }
+             if (tetrisGameOverState) {
+                 if(activeGameInterval) clearInterval(activeGameInterval); activeGameInterval = null;
+                  if(tetrisGameOverEl) {
+                      tetrisGameOverEl.style.display = 'block'; // Mostra mensagem
+                      tetrisGameOverEl.classList.add('visible');
+                  }
+                 if (activeKeyListener) { document.removeEventListener('keydown', activeKeyListener); activeKeyListener = null; }
+                 console.log("Tetris Over! Score:", tetrisScore); return;
+             }
+             if (!moveTetrisPiece(0, 1)) {
+                  freezeTetrisPiece();
+                  if (tetrisGameOverState) { drawTetris(); tetrisGameLoop(); return; } // Verifica game over após congelar
+                  clearTetrisLines(); spawnNewTetrisPiece();
+                  if (tetrisGameOverState) { drawTetrisBoard(); tetrisGameLoop(); return; } // Verifica game over após spawn
+             }
+             drawTetris();
+        }
+        function drawTetris() { /* ... (igual) ... */ if (!tetrisCtx) return; tetrisCtx.fillStyle = '#000'; tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height); drawTetrisBoard(); drawTetrisPieceShape(tetrisCtx, currentPiece.shape, currentX, currentY, currentPiece.color, tetrisBlockSize); }
+        function drawTetrisBoard() { /* ... (igual) ... */ if (!tetrisCtx || !tetrisBoard) return; for (let r = 0; r < tetrisBoardHeight; r++) { for (let c = 0; c < tetrisBoardWidth; c++) { if (tetrisBoard[r] && tetrisBoard[r][c] !== 0) { drawTetrisBlock(tetrisCtx, c, r, tetrisBoard[r][c], tetrisBlockSize); } } } }
+        function drawTetrisPieceShape(ctx, shape, xOffset, yOffset, color, blockSize) { /* ... (igual) ... */ if(!ctx) return; for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { drawTetrisBlock(ctx, xOffset + c, yOffset + r, color, blockSize); } } } }
+        function drawTetrisBlock(ctx, gridX, gridY, color, blockSize) { /* ... (igual) ... */ if (!ctx || gridY < 0) return; const x = gridX * blockSize; const y = gridY * blockSize; ctx.fillStyle = color; ctx.fillRect(x, y, blockSize, blockSize); ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; ctx.strokeRect(x, y, blockSize, blockSize); }
         function drawNextPiece() { /* ... (igual) ... */
+             if (!nextPieceCtx || !nextPieceCanvas) return;
              const previewBlockSize = nextPieceCanvas.width / 4; nextPieceCtx.fillStyle = '#000'; nextPieceCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
              if (nextPiece) { const shape = nextPiece.shape; const shapeWidth = shape[0].length; const shapeHeight = shape.length; const xOff = Math.floor((4 - shapeWidth) / 2); const yOff = Math.floor((4 - shapeHeight) / 2); drawTetrisPieceShape(nextPieceCtx, shape, xOff, yOff, nextPiece.color, previewBlockSize); }
-         }
-        function handleTetrisKey(e) { /* ... (igual) ... */ if (tetrisGameOver) return; let moved = false; switch (e.key) { case 'ArrowLeft': moved = moveTetrisPiece(-1, 0); break; case 'ArrowRight': moved = moveTetrisPiece(1, 0); break; case 'ArrowDown': moved = moveTetrisPiece(0, 1); if(moved) tetrisScore += 1; break; /* Ponto por acelerar */ case 'ArrowUp': case ' ': rotateTetrisPiece(); moved = true; e.preventDefault(); break; } if (moved) { tetrisScoreEl.textContent = tetrisScore; drawTetris(); } }
+        }
+        function handleTetrisKey(e) { /* ... (igual) ... */ if (tetrisGameOverState) return; let moved = false; switch (e.key) { case 'ArrowLeft': moved = moveTetrisPiece(-1, 0); break; case 'ArrowRight': moved = moveTetrisPiece(1, 0); break; case 'ArrowDown': moved = moveTetrisPiece(0, 1); if(moved) tetrisScore += 1; /* Ponto por acelerar */ break; case 'ArrowUp': case ' ': rotateTetrisPiece(); moved = true; e.preventDefault(); break; } if (moved) { tetrisScoreEl.textContent = tetrisScore; drawTetris(); } }
         function startTetris() {
+            if (!tetrisCanvas || !nextPieceCanvas) { console.error("Tetris canvas not found!"); return; }
              console.log("Starting Tetris..."); clearActiveGame();
-             tetrisBoard = createEmptyBoard(); tetrisScore = 0; tetrisGameOver = false;
+             tetrisBoard = createEmptyBoard(); tetrisScore = 0; tetrisGameOverState = false;
              initialDropSpeed = parseInt(settings.tetrisDifficulty) || 1000; // Pega velocidade da config
              dropSpeed = initialDropSpeed; // Reseta velocidade atual
-             tetrisScoreEl.textContent = tetrisScore;
-             tetrisGameOverEl.classList.remove('visible'); tetrisGameOverEl.style.display = 'none'; // Garante que está escondido
+             if(tetrisScoreEl) tetrisScoreEl.textContent = tetrisScore;
+             if(tetrisGameOverEl) {
+                 tetrisGameOverEl.classList.remove('visible'); tetrisGameOverEl.style.display = 'none'; // Garante que está escondido
+             }
              nextPiece = getRandomTetrisPiece(); spawnNewTetrisPiece();
+             if (tetrisGameOverState) { // Check if game over immediately after spawn
+                 tetrisGameLoop();
+                 return;
+             }
              activeKeyListener = handleTetrisKey; document.addEventListener('keydown', activeKeyListener);
              activeGameInterval = setInterval(tetrisGameLoop, dropSpeed);
              drawTetris();
@@ -1453,26 +1761,32 @@
 
 
         /* ========== Snake (Com Skins e Dificuldade) ========== */
-        const snakeCanvas = document.getElementById('snakeCanvas'); const snakeCtx = snakeCanvas.getContext('2d'); const snakeScoreEl = document.getElementById('snakeScore'); const snakeGameOverEl = document.getElementById('snakeGameOver'); const snakeGridSize = 20; let snakeTileCount; // Calculado dinamicamente
-        let snake, snakeDirection, snakeFood, snakeScore, snakeGameOver, snakeSpeed;
+        const snakeCanvas = document.getElementById('snakeCanvas'); const snakeCtx = snakeCanvas?.getContext('2d'); const snakeScoreEl = document.getElementById('snakeScore'); const snakeGameOverEl = document.getElementById('snakeGameOver'); const snakeGridSize = 20;
+        let snakeTileCount, snakeCanvasSize; // Calculado dinamicamente
+        let snake, snakeDirection, snakeFood, snakeScore, snakeGameOverState, snakeSpeed; // Renomeado snakeGameOver
 
         function initSnake() {
+            if(!snakeCanvas) return;
              snakeCanvasSize = snakeCanvas.clientWidth; // Pega tamanho atual do canvas
-             snakeCanvas.width = snakeCanvasSize; // Ajusta resolução interna
-             snakeCanvas.height = snakeCanvasSize;
-             snakeTileCount = snakeCanvasSize / snakeGridSize;
+             snakeCanvas.width = snakeCanvasSize - (snakeCanvasSize % snakeGridSize); // Ajusta resolução interna para ser múltiplo do grid
+             snakeCanvas.height = snakeCanvasSize - (snakeCanvasSize % snakeGridSize);
+             snakeTileCount = snakeCanvas.width / snakeGridSize;
 
              const startX = Math.floor(snakeTileCount / 2); const startY = Math.floor(snakeTileCount / 2);
-             snake = [{ x: startX, y: startY }]; snakeDirection = { x: 0, y: 0 }; snakeScore = 0; snakeGameOver = false;
-             snakeScoreEl.textContent = snakeScore;
-             snakeGameOverEl.classList.remove('visible'); snakeGameOverEl.style.display = 'none'; // Garante que está escondido
+             snake = [{ x: startX, y: startY }]; snakeDirection = { x: 0, y: 0 }; snakeScore = 0; snakeGameOverState = false;
+             if(snakeScoreEl) snakeScoreEl.textContent = snakeScore;
+             if(snakeGameOverEl) {
+                 snakeGameOverEl.classList.remove('visible'); snakeGameOverEl.style.display = 'none'; // Garante que está escondido
+             }
              placeSnakeFood();
         }
         function updateSnake() { /* ... (igual, usa display toggle) ... */
-             if (snakeGameOver) {
-                 clearInterval(activeGameInterval); activeGameInterval = null;
-                  snakeGameOverEl.style.display = 'block'; // Mostra
-                 snakeGameOverEl.classList.add('visible');
+             if (snakeGameOverState) {
+                 if(activeGameInterval) clearInterval(activeGameInterval); activeGameInterval = null;
+                 if(snakeGameOverEl) {
+                     snakeGameOverEl.style.display = 'block'; // Mostra
+                     snakeGameOverEl.classList.add('visible');
+                 }
                  if (activeKeyListener) { document.removeEventListener('keydown', activeKeyListener); activeKeyListener = null; }
                  return;
              }
@@ -1481,75 +1795,84 @@
              }
              let head = { x: snake[0].x + snakeDirection.x, y: snake[0].y + snakeDirection.y };
              // Verifica colisão com bordas
-             if (head.x < 0 || head.x >= snakeTileCount || head.y < 0 || head.y >= snakeTileCount) { snakeGameOver = true; drawSnake(); updateSnake(); return; }
+             if (head.x < 0 || head.x >= snakeTileCount || head.y < 0 || head.y >= snakeTileCount) { snakeGameOverState = true; drawSnake(); updateSnake(); return; }
              // Verifica colisão com o corpo
-             for (let i = 1; i < snake.length; i++) { if (snake[i].x === head.x && snake[i].y === head.y) { snakeGameOver = true; drawSnake(); updateSnake(); return; } }
+             for (let i = 1; i < snake.length; i++) { if (snake[i].x === head.x && snake[i].y === head.y) { snakeGameOverState = true; drawSnake(); updateSnake(); return; } }
 
              snake.unshift(head); // Adiciona nova cabeça
 
              // Verifica se comeu a comida
              if (Math.floor(head.x) === Math.floor(snakeFood.x) && Math.floor(head.y) === Math.floor(snakeFood.y)) {
-                  snakeScore++; snakeScoreEl.textContent = snakeScore; placeSnakeFood();
-                  // Opcional: Aumentar velocidade ao comer
-                  // if (snakeSpeed > 50 && snakeScore % 5 === 0) { snakeSpeed = Math.max(50, snakeSpeed - 10); clearInterval(activeGameInterval); activeGameInterval = setInterval(updateSnake, snakeSpeed); }
+                 snakeScore++; if(snakeScoreEl) snakeScoreEl.textContent = snakeScore; placeSnakeFood();
+                 // Opcional: Aumentar velocidade ao comer
+                 // if (snakeSpeed > 50 && snakeScore % 5 === 0) { snakeSpeed = Math.max(50, snakeSpeed - 10); clearInterval(activeGameInterval); activeGameInterval = setInterval(updateSnake, snakeSpeed); }
              } else {
                   snake.pop(); // Remove a cauda se não comeu
              }
              drawSnake();
-         }
+        }
         function placeSnakeFood() { /* ... (igual) ... */
              let newFoodPosition;
              do { newFoodPosition = { x: Math.floor(Math.random() * snakeTileCount), y: Math.floor(Math.random() * snakeTileCount) }; }
              while (snake.some(segment => Math.floor(segment.x) === Math.floor(newFoodPosition.x) && Math.floor(segment.y) === Math.floor(newFoodPosition.y)));
              snakeFood = newFoodPosition;
-         }
+        }
         function drawSnake() { /* ... (igual, usa skin da config) ... */
+             if (!snakeCtx || !snakeCanvasSize) return;
               snakeCtx.fillStyle = settings.theme === 'light' ? '#eee' : '#000'; // Fundo baseado no tema
-              snakeCtx.fillRect(0, 0, snakeCanvasSize, snakeCanvasSize);
-              // Comida
-              snakeCtx.fillStyle = '#f00';
-              snakeCtx.fillRect(snakeFood.x * snakeGridSize, snakeFood.y * snakeGridSize, snakeGridSize - 1, snakeGridSize - 1);
-              // Cobra
-              const skin = settings.snakeSkin;
-              snake.forEach((segment, index) => {
-                  const x = segment.x * snakeGridSize; const y = segment.y * snakeGridSize; const size = snakeGridSize - 1;
-                  const isHead = index === 0;
-                  if (skin === 'blue') { snakeCtx.fillStyle = isHead ? '#0077cc' : '#00aaff'; }
-                  else if (skin === 'rainbow') { const hue = (index * 20 + Date.now()/10) % 360; snakeCtx.fillStyle = `hsl(${hue}, 100%, 50%)`; } // Rainbow animado
-                  else if (skin === 'matrix') { snakeCtx.fillStyle = isHead ? '#fff' : (Math.random() > 0.1 ? '#0f0' : '#0a0'); }
-                  else { snakeCtx.fillStyle = isHead ? '#00cc00' : '#0f0'; } // Verde padrão
-                  snakeCtx.fillRect(x, y, size, size);
-              });
-         }
+              snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height); // Usa width/height do canvas
+             // Comida
+             if (snakeFood) {
+                 snakeCtx.fillStyle = '#f00';
+                 snakeCtx.fillRect(snakeFood.x * snakeGridSize, snakeFood.y * snakeGridSize, snakeGridSize - 1, snakeGridSize - 1);
+             }
+             // Cobra
+             const skin = settings.snakeSkin;
+             snake.forEach((segment, index) => {
+                 const x = segment.x * snakeGridSize; const y = segment.y * snakeGridSize; const size = snakeGridSize - 1;
+                 const isHead = index === 0;
+                 if (skin === 'blue') { snakeCtx.fillStyle = isHead ? '#0077cc' : '#00aaff'; }
+                 else if (skin === 'rainbow') { const hue = (index * 20 + Date.now()/10) % 360; snakeCtx.fillStyle = `hsl(${hue}, 100%, 50%)`; } // Rainbow animado
+                 else if (skin === 'matrix') { snakeCtx.fillStyle = isHead ? '#fff' : (Math.random() > 0.1 ? '#0f0' : '#0a0'); }
+                 else { snakeCtx.fillStyle = isHead ? '#00cc00' : '#0f0'; } // Verde padrão
+                 snakeCtx.fillRect(x, y, size, size);
+             });
+        }
         function handleSnakeKey(e) { /* ... (igual) ... */
-              let newDirection = null;
-              switch (e.key) { case 'ArrowUp': if (snakeDirection.y !== 1) newDirection = { x: 0, y: -1 }; break; case 'ArrowDown': if (snakeDirection.y !== -1) newDirection = { x: 0, y: 1 }; break; case 'ArrowLeft': if (snakeDirection.x !== 1) newDirection = { x: -1, y: 0 }; break; case 'ArrowRight': if (snakeDirection.x !== -1) newDirection = { x: 1, y: 0 }; break; }
-              if (newDirection) {
-                   // Evitar iniciar o jogo se não houver direção ainda (só cabeça)
-                   if (snake.length === 1 && snakeDirection.x === 0 && snakeDirection.y === 0) {
-                       // Primeira jogada, inicia o loop se não estiver rodando
-                       if (!activeGameInterval) {
-                            activeGameInterval = setInterval(updateSnake, snakeSpeed);
-                       }
-                   }
-                   snakeDirection = newDirection;
-                   e.preventDefault();
-              }
-         }
+            if (snakeGameOverState) return; // Impede movimento após game over
+             let newDirection = null;
+             switch (e.key) { case 'ArrowUp': if (snakeDirection.y !== 1) newDirection = { x: 0, y: -1 }; break; case 'ArrowDown': if (snakeDirection.y !== -1) newDirection = { x: 0, y: 1 }; break; case 'ArrowLeft': if (snakeDirection.x !== 1) newDirection = { x: -1, y: 0 }; break; case 'ArrowRight': if (snakeDirection.x !== -1) newDirection = { x: 1, y: 0 }; break; }
+             if (newDirection) {
+                 // Evitar iniciar o jogo se não houver direção ainda (só cabeça)
+                 if (snake.length === 1 && snakeDirection.x === 0 && snakeDirection.y === 0) {
+                     // Primeira jogada, inicia o loop se não estiver rodando
+                     if (!activeGameInterval) {
+                          activeGameInterval = setInterval(updateSnake, snakeSpeed);
+                     }
+                 }
+                  // Impede a cobra de inverter a direção diretamente
+                 if (snake.length > 1 && newDirection.x === -snakeDirection.x && newDirection.y === -snakeDirection.y) {
+                     // Não faz nada se a nova direção for oposta à atual
+                 } else {
+                      snakeDirection = newDirection;
+                 }
+                  e.preventDefault();
+             }
+        }
         function startSnake() {
+            if(!snakeCanvas) { console.error("Snake canvas not found!"); return;}
              console.log("Starting Snake..."); clearActiveGame();
              snakeSpeed = parseInt(settings.snakeDifficulty) || 150; // Pega velocidade da config
              initSnake();
              activeKeyListener = handleSnakeKey; document.addEventListener('keydown', activeKeyListener);
-             // Não iniciar intervalo aqui, iniciar no primeiro movimento em handleSnakeKey ou após um delay?
-             // Vamos iniciar aqui para o jogo começar visualmente
+             // Não iniciar intervalo aqui, iniciar no primeiro movimento em handleSnakeKey
              drawSnake(); // Desenho inicial
              // O jogo só se move após a primeira tecla pressionada (ver handleSnakeKey)
         }
 
 
         /* ========== Pong (Com keydown/keyup e game over melhorado) ========== */
-        const pongCanvas = document.getElementById('pongCanvas'); const pongCtx = pongCanvas.getContext('2d');
+        const pongCanvas = document.getElementById('pongCanvas'); const pongCtx = pongCanvas?.getContext('2d');
         const pongScoreLeftEl = document.getElementById('pongScoreLeft'); const pongScoreRightEl = document.getElementById('pongScoreRight');
         const pongGameOverEl = document.getElementById('pongGameOver');
         const PADDLE_HEIGHT = 80, PADDLE_WIDTH = 10, BALL_RADIUS = 8;
@@ -1557,64 +1880,76 @@
         let ballX, ballY, ballSpeedX, ballSpeedY;
         let paddleLeftY, paddleRightY;
         let scoreLeft, scoreRight;
-        let pongGameOver;
+        let pongGameOverState; // Renomeado
         let keysPressed = {};
 
         function initPong() {
+            if(!pongCanvas) return;
              pongCanvas.width = pongCanvas.clientWidth; // Ajusta resolução
              pongCanvas.height = pongCanvas.clientHeight;
-             scoreLeft = 0; scoreRight = 0; pongGameOver = false;
-             pongScoreLeftEl.textContent = scoreLeft; pongScoreRightEl.textContent = scoreRight;
-             pongGameOverEl.classList.remove('visible'); pongGameOverEl.style.display = 'none'; // Garante
+             scoreLeft = 0; scoreRight = 0; pongGameOverState = false;
+             if(pongScoreLeftEl) pongScoreLeftEl.textContent = scoreLeft;
+             if(pongScoreRightEl) pongScoreRightEl.textContent = scoreRight;
+             if(pongGameOverEl) {
+                 pongGameOverEl.classList.remove('visible'); pongGameOverEl.style.display = 'none'; // Garante
+             }
              paddleLeftY = paddleRightY = (pongCanvas.height - PADDLE_HEIGHT) / 2;
              resetPongBall(Math.random() > 0.5 ? 1 : -1); // Direção inicial aleatória
         }
         function resetPongBall(direction) { /* ... (igual) ... */
+             if(!pongCanvas) return;
              ballX = pongCanvas.width / 2; ballY = pongCanvas.height / 2;
              ballSpeedY = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 2 + 3); // Speed 3-5
              ballSpeedX = direction * (Math.random() * 2 + 4); // Speed 4-6
         }
         function movePongPaddles() { /* ... (igual) ... */
+             if(!pongCanvas) return;
               if (keysPressed['w'] || keysPressed['W']) paddleLeftY -= PADDLE_SPEED;
               if (keysPressed['s'] || keysPressed['S']) paddleLeftY += PADDLE_SPEED;
               if (keysPressed['ArrowUp']) paddleRightY -= PADDLE_SPEED;
               if (keysPressed['ArrowDown']) paddleRightY += PADDLE_SPEED;
               paddleLeftY = Math.max(0, Math.min(pongCanvas.height - PADDLE_HEIGHT, paddleLeftY));
               paddleRightY = Math.max(0, Math.min(pongCanvas.height - PADDLE_HEIGHT, paddleRightY));
-         }
+        }
         function movePongBall() { /* ... (igual) ... */
-              if (pongGameOver) return; ballX += ballSpeedX; ballY += ballSpeedY;
-              // Wall collision (Top/Bottom)
-              if (ballY - BALL_RADIUS < 0 || ballY + BALL_RADIUS > pongCanvas.height) { ballSpeedY = -ballSpeedY; ballY = (ballY - BALL_RADIUS < 0) ? BALL_RADIUS : pongCanvas.height - BALL_RADIUS; }
-              // Paddle Collision
-              const hitLeft = ballX - BALL_RADIUS < PADDLE_WIDTH && ballY > paddleLeftY && ballY < paddleLeftY + PADDLE_HEIGHT && ballSpeedX < 0;
-              const hitRight = ballX + BALL_RADIUS > pongCanvas.width - PADDLE_WIDTH && ballY > paddleRightY && ballY < paddleRightY + PADDLE_HEIGHT && ballSpeedX > 0;
-              if (hitLeft || hitRight) {
-                   ballSpeedX = -ballSpeedX * 1.02; // Inverte e acelera um pouco
-                   const paddleY = hitLeft ? paddleLeftY : paddleRightY;
-                   let deltaY = ballY - (paddleY + PADDLE_HEIGHT / 2);
-                   ballSpeedY = deltaY * 0.25; // Mais influência do ponto de toque
-                   // Limitar velocidade máxima Y
-                   ballSpeedY = Math.max(-8, Math.min(8, ballSpeedY));
-              }
-              // Score
-              if (ballX - BALL_RADIUS < 0) { scoreRight++; pongScoreRightEl.textContent = scoreRight; checkPongWin("Jogador 2", scoreRight); }
-              else if (ballX + BALL_RADIUS > pongCanvas.width) { scoreLeft++; pongScoreLeftEl.textContent = scoreLeft; checkPongWin("Jogador 1", scoreLeft); }
-         }
+             if (pongGameOverState || !pongCanvas) return; ballX += ballSpeedX; ballY += ballSpeedY;
+             // Wall collision (Top/Bottom)
+             if (ballY - BALL_RADIUS < 0 || ballY + BALL_RADIUS > pongCanvas.height) { ballSpeedY = -ballSpeedY; ballY = (ballY - BALL_RADIUS < 0) ? BALL_RADIUS : pongCanvas.height - BALL_RADIUS; }
+             // Paddle Collision
+             const hitLeft = ballX - BALL_RADIUS < PADDLE_WIDTH && ballY > paddleLeftY && ballY < paddleLeftY + PADDLE_HEIGHT && ballSpeedX < 0;
+             const hitRight = ballX + BALL_RADIUS > pongCanvas.width - PADDLE_WIDTH && ballY > paddleRightY && ballY < paddleRightY + PADDLE_HEIGHT && ballSpeedX > 0;
+             if (hitLeft || hitRight) {
+                  ballSpeedX = -ballSpeedX * 1.02; // Inverte e acelera um pouco
+                  const paddleY = hitLeft ? paddleLeftY : paddleRightY;
+                  let deltaY = ballY - (paddleY + PADDLE_HEIGHT / 2);
+                  ballSpeedY = deltaY * 0.25; // Mais influência do ponto de toque
+                  // Limitar velocidade máxima Y
+                  ballSpeedY = Math.max(-8, Math.min(8, ballSpeedY));
+                  // Limitar velocidade X também
+                  ballSpeedX = Math.max(-10, Math.min(10, ballSpeedX));
+             }
+             // Score
+             if (ballX - BALL_RADIUS < 0) { scoreRight++; if(pongScoreRightEl) pongScoreRightEl.textContent = scoreRight; checkPongWin("Jogador 2", scoreRight); }
+             else if (ballX + BALL_RADIUS > pongCanvas.width) { scoreLeft++; if(pongScoreLeftEl) pongScoreLeftEl.textContent = scoreLeft; checkPongWin("Jogador 1", scoreLeft); }
+        }
          function checkPongWin(player, score) {
               if (score >= WINNING_SCORE) { endPongGame(player); }
               else { resetPongBall(player === "Jogador 1" ? 1 : -1); } // Serve para o outro lado
          }
         function endPongGame(winner) { /* ... (igual, usa display toggle) ... */
-              pongGameOver = true; pongGameOverEl.innerText = `🎉 ${winner} Venceu!`;
-               pongGameOverEl.style.display = 'block'; // Mostra
-              pongGameOverEl.classList.add('visible');
-              clearInterval(activeGameInterval); activeGameInterval = null;
-              if (activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
-              if (activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
-              activeKeyListeners = {}; keysPressed = {};
-         }
+             pongGameOverState = true;
+             if(pongGameOverEl) {
+                 pongGameOverEl.innerText = `🎉 ${winner} Venceu!`;
+                 pongGameOverEl.style.display = 'block'; // Mostra
+                 pongGameOverEl.classList.add('visible');
+             }
+             if(activeGameInterval) clearInterval(activeGameInterval); activeGameInterval = null;
+             if (activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
+             if (activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
+             activeKeyListeners = {}; keysPressed = {};
+        }
         function drawPong() { /* ... (igual) ... */
+             if (!pongCtx || !pongCanvas) return;
               pongCtx.fillStyle = settings.theme === 'light' ? '#ddd' : '#111'; pongCtx.fillRect(0, 0, pongCanvas.width, pongCanvas.height);
               pongCtx.fillStyle = settings.theme === 'light' ? '#333' : '#fff';
               pongCtx.fillRect(0, paddleLeftY, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -1623,19 +1958,21 @@
               // Center line
               pongCtx.strokeStyle = settings.theme === 'light' ? '#aaa' : '#555'; pongCtx.lineWidth = 4; pongCtx.setLineDash([10, 10]);
               pongCtx.beginPath(); pongCtx.moveTo(pongCanvas.width / 2, 0); pongCtx.lineTo(pongCanvas.width / 2, pongCanvas.height); pongCtx.stroke(); pongCtx.setLineDash([]);
-         }
-        function pongGameLoop() { if (pongGameOver) return; movePongPaddles(); movePongBall(); drawPong(); }
+        }
+        function pongGameLoop() { if (pongGameOverState) return; movePongPaddles(); movePongBall(); drawPong(); }
         function handlePongKeyDown(e) { keysPressed[e.key] = true; if (['ArrowUp', 'ArrowDown', 'w', 'W', 's', 'S'].includes(e.key)) e.preventDefault(); }
         function handlePongKeyUp(e) { keysPressed[e.key] = false; }
         function startPong() {
+            if(!pongCanvas) { console.error("Pong canvas not found!"); return;}
              console.log("Starting Pong..."); clearActiveGame(); initPong(); keysPressed = {};
              // Guarda as referências corretas para poder remover depois
              activeKeyListeners = { down: handlePongKeyDown, up: handlePongKeyUp };
              document.addEventListener('keydown', activeKeyListeners.down);
              document.addEventListener('keyup', activeKeyListeners.up);
-             activeGameInterval = setInterval(pongGameLoop, 1000 / 60);
+             activeGameInterval = setInterval(pongGameLoop, 1000 / 60); // ~60 FPS
              drawPong();
         }
+
 
     </script>
 </body>
