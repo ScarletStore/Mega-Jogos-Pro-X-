@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="theme-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Jogos Pro X+</title> <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        /* Tema escuro e layout profissional */
+        :root {
+            --primary-bg-dark: #121212;
+            --secondary-bg-dark: #1f1f1f;
+            --tertiary-bg-dark: #333;
+            --text-color-dark: #e0e0e0;
+            --border-color-dark: #555;
+
+            --primary-bg-light: #f0f0f0;
+            --secondary-bg-light: #ffffff;
+            --tertiary-bg-light: #e0e0e0;
+            --text-color-light: #212121;
+            --border-color-light: #cccccc;
+
+            --accent-color: #00aaff;
+            --highlight-color: #ffeb3b;
+            --win-color: #4caf50;
+            --error-color: #f44336;
+            --font-family: 'Roboto', sans-serif;
+
+            /* Default to dark theme variables */
+            --primary-bg: var(--primary-bg-dark);
+            --secondary-bg: var(--secondary-bg-dark);
+            --tertiary-bg: var(--tertiary-bg-dark);
+            --text-color: var(--text-color-dark);
+            --border-color: var(--border-color-dark);
+        }
+
+        /* Light theme overrides */
+        html.theme-light {
+            --primary-bg: var(--primary-bg-light);
+            --secondary-bg: var(--secondary-bg-light);
+            --tertiary-bg: var(--tertiary-bg-light);
+            --text-color: var(--text-color-light);
+            --border-color: var(--border-color-light);
+        }
+
+        /* Estilos Globais e Reset Básico */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px; /* Aumentar espaço para footer */
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--secondary-bg);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--tertiary-bg);
+            transition: background-color 0.3s ease-in-out, border-bottom-color 0.3s ease-in-out;
+            position: sticky; /* Fixar header */
+            top: 0;
+            z-index: 100;
+        }
+
+        header img#logo {
+            height: 40px; /* Ajustar tamanho */
+            width: auto;
+            margin-right: 15px;
+            background-color: var(--tertiary-bg);
+            border-radius: 5px;
+            display: none; /* Esconder se não houver src */
+        }
+        header img#logo[src]:not([src=""]):not([onerror*="display=none"]) {
+             display: block; /* Mostrar apenas se houver src válido */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5em; /* Usar em para melhor escalabilidade */
+            color: var(--text-color);
+            transition: color 0.3s ease-in-out;
+            flex-grow: 1; /* Ocupar espaço disponível */
+        }
+
+        .tab {
+            display: flex;
+            background-color: var(--secondary-bg);
+            border-bottom: 2px solid var(--border-color);
+            overflow-x: auto; /* Permite scroll horizontal em telas pequenas */
+            transition: background-color 0.3s ease-in-out, border-bottom-color 0.3s ease-in-out;
+            -webkit-overflow-scrolling: touch; /* Scroll suave em iOS */
+            scrollbar-width: thin; /* Scrollbar mais fino (Firefox) */
+            scrollbar-color: var(--accent-color) var(--secondary-bg); /* Cor do scrollbar (Firefox) */
+        }
+        /* Scrollbar para Chrome/Edge/Safari */
+        .tab::-webkit-scrollbar {
+            height: 5px;
+        }
+        .tab::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+        .tab::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 10px;
+            border: 1px solid var(--secondary-bg);
+        }
+
+        .tab button {
+            flex: 0 0 auto; /* Não crescer, não encolher, base auto */
+            background-color: transparent;
+            border: none;
+            padding: 14px 18px; /* Ajustar padding */
+            cursor: pointer;
+            font-size: 1em; /* Usar em */
+            color: var(--text-color);
+            transition: background-color 0.2s ease-out, border-bottom 0.2s ease-out, color 0.2s ease-out;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        /* Opcional: Adicionar espaço para ícone */
+        /* .tab button i { margin-right: 8px; } */
+
+        .tab button:hover {
+            background-color: var(--tertiary-bg);
+            color: var(--accent-color);
+        }
+
+        .tab button.active {
+            background-color: var(--tertiary-bg);
+            border-bottom: 3px solid var(--accent-color);
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px 15px; /* Ajustar padding */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gameOverPulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        .game-over-message {
+            color: var(--error-color);
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.3em;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(244, 67, 54, 0.1); /* Fundo leve */
+            border-radius: 5px;
+            animation: gameOverPulse 1.2s ease-in-out infinite;
+            display: none; /* Escondido por padrão */
+        }
+        .game-over-message.visible {
+            display: block;
+        }
+        .win-message { /* Estilo para mensagem de vitória */
+             color: var(--win-color);
+             font-weight: bold;
+             text-align: center;
+             font-size: 1.3em;
+             margin-top: 15px;
+             padding: 10px;
+             background-color: rgba(76, 175, 80, 0.1); /* Fundo leve */
+             border-radius: 5px;
+        }
+
+
+        .game-container, .tool-container, .settings-container {
+            max-width: 95%; /* Usar % para melhor fluidez */
+            width: 800px; /* Manter max-width */
+            margin: 20px auto;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra mais suave */
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+        }
+         h3 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+             border-bottom: 1px solid var(--border-color);
+             padding-bottom: 5px;
+             font-size: 1.2em;
+        }
+        h4 {
+            margin-bottom: 5px;
+            color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--primary-bg-dark);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease-out, transform 0.1s ease-out, box-shadow 0.2s ease-out;
+            margin: 5px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background-color: #008fcc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        button:active {
+             transform: scale(0.97);
+             box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        button.secondary {
+            background-color: var(--tertiary-bg);
+            color: var(--text-color);
+        }
+        button.secondary:hover {
+             background-color: #555;
+        }
+        button:disabled { /* Estilo para botões desabilitados */
+             background-color: #555;
+             color: #aaa;
+             cursor: not-allowed;
+             box-shadow: none;
+             transform: none;
+        }
+
+
+        input[type="text"], input[type="number"], select {
+            padding: 10px; /* Mais padding */
+            margin: 5px 0; /* Ajuste margem */
+            border: 1px solid var(--border-color);
+            background-color: var(--tertiary-bg);
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            width: 100%; /* Ocupar largura disponível por padrão */
+            max-width: 250px; /* Limitar largura máxima */
+            display: inline-block; /* Permitir lado a lado se houver espaço */
+            vertical-align: middle; /* Alinhar com labels/botões */
+        }
+        input[type="text"]::placeholder, input[type="number"]::placeholder {
+             color: #aaa;
+             opacity: 0.8;
+        }
+
+
+        label {
+             margin-right: 8px;
+             margin-left: 3px;
+             display: inline-block; /* Para alinhar com inputs */
+             margin-bottom: 5px;
+        }
+
+        /* Custom Radio/Checkbox (melhor visual) */
+        .setting-option {
+             margin-bottom: 10px;
+        }
+        .setting-option label {
+             cursor: pointer;
+             display: inline-flex; /* Alinhar ícone e texto */
+             align-items: center;
+             margin-right: 15px;
+        }
+        .setting-option input[type="radio"], .setting-option input[type="checkbox"] {
+            opacity: 0; /* Esconder o original */
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+        .setting-option label::before { /* Criar o visual fake */
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            border: 2px solid var(--border-color);
+            background-color: var(--tertiary-bg);
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .setting-option input[type="radio"] + label::before {
+            border-radius: 50%; /* Círculo para radio */
+        }
+         .setting-option input[type="checkbox"] + label::before {
+            border-radius: 3px; /* Quadrado para checkbox */
+        }
+         /* Estado checked */
+        .setting-option input[type="radio"]:checked + label::before {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            background-image: radial-gradient(circle, var(--primary-bg-dark) 40%, transparent 45%);
+        }
+         .setting-option input[type="checkbox"]:checked + label::before {
+             background-color: var(--accent-color);
+             border-color: var(--accent-color);
+              /* Adicionar um checkmark (pode usar SVG ou caractere) */
+              color: var(--primary-bg-dark);
+              text-align: center;
+              font-weight: bold;
+              content: '✔'; /* Simples checkmark */
+              font-size: 12px;
+              line-height: 17px;
+        }
+
+
+        /* Calculadora (Sem mudanças significativas) */
+        .calculator { max-width: 320px; margin: 0 auto; background-color: var(--secondary-bg); border-radius: 8px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); transition: background-color 0.3s; }
+        .calculator-display { width: calc(100% - 20px); background-color: var(--primary-bg); color: var(--win-color); text-align: right; padding: 15px 10px; font-size: 24px; border-radius: 5px; margin-bottom: 15px; min-height: 30px; overflow-wrap: break-word; border: 1px solid var(--border-color); transition: background-color 0.3s, color 0.3s, border-color 0.3s;}
+        .calculator-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .calculator-buttons button { padding: 20px; font-size: 18px; border-radius: 5px; background-color: var(--tertiary-bg); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
+        .calculator-buttons button:hover { background-color: #444; }
+        .calculator-buttons button.operator { background-color: #555; color: var(--accent-color); }
+        .calculator-buttons button.equals { background-color: var(--accent-color); color: var(--primary-bg-dark); grid-column: span 2; }
+        .calculator-buttons button.clear { background-color: var(--error-color); color: var(--text-color); }
+
+
+        /* Jogo da Velha (Ajustes de tamanho e responsividade) */
+        #ticTacToeSetup { text-align: center; margin-bottom: 20px; padding: 15px; background-color: var(--tertiary-bg); border-radius: 5px; transition: background-color 0.3s; }
+        #ticTacToeSetup label, #ticTacToeSetup input, #ticTacToeSetup select { margin: 5px 5px; max-width: 120px; }
+        #ticTacToe table { margin: 20px auto; border-collapse: collapse; background-color: var(--primary-bg); transition: background-color 0.3s; width: 90%; max-width: 330px; aspect-ratio: 1 / 1; /* Manter quadrado */ }
+        #ticTacToe td { border: 3px solid var(--accent-color); width: 33.33%; height: 33.33%; text-align: center; vertical-align: middle; font-size: 3em; /* Ajustar dinamicamente se necessário */ font-weight: bold; cursor: pointer; transition: background-color 0.2s ease-out, color 0.3s ease-out; color: var(--text-color); }
+        #ticTacToe td:hover { background-color: var(--tertiary-bg); }
+        #ticTacToe td.win-cell { background-color: var(--win-color) !important; color: var(--primary-bg-dark); animation: pulse 0.8s infinite alternate; }
+        @keyframes pulse { to { transform: scale(1.03); opacity: 0.8; } }
+        #ticTacToeResult { text-align: center; margin-top: 15px; font-size: 1.1em; font-weight: bold; min-height: 30px; transition: color 0.3s; }
+
+        /* Caça-Palavras (Ajustes para responsividade) */
+        #wordSearchContainer { display: flex; gap: 20px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+        #wordSearchGrid table { margin: 0; border-collapse: collapse; user-select: none; background-color: var(--primary-bg); transition: background-color 0.3s; }
+        #wordSearchGrid td { border: 1px solid var(--border-color); width: 30px; /* Tamanho base */ height: 30px; text-align: center; font-size: 1em; /* Usar em */ cursor: pointer; transition: background-color 0.1s, color 0.1s, border-color 0.3s; position: relative; color: var(--text-color); }
+        #wordSearchGrid td:hover { background-color: var(--tertiary-bg); }
+        #wordSearchGrid td.selecting { background-color: var(--accent-color); color: var(--primary-bg-dark); }
+        #wordSearchGrid td.found { background-color: var(--highlight-color); color: var(--primary-bg-dark); font-weight: bold; }
+        #wordSearchList { list-style: none; padding: 0; margin: 0 0 0 15px; /* Adicionar margem esquerda */ max-width: 180px; background-color: var(--tertiary-bg); padding: 10px; border-radius: 5px; }
+        #wordSearchList li { margin-bottom: 8px; padding: 5px; border-radius: 4px; transition: background-color 0.3s, text-decoration 0.3s, color 0.3s; font-size: 0.9em; }
+        #wordSearchList li.found { text-decoration: line-through wavy; background-color: var(--win-color); color: var(--primary-bg-dark); }
+        #wordSearchResult { text-align: center; margin-top: 20px; font-size: 1.1em; width: 100%; min-height: 25px; font-weight: bold; }
+
+        /* Canvas Container Styles (Ajustes para centralizar e responsividade) */
+        .game-canvas-container { text-align: center; }
+        canvas { display: block; /* Mudar para block para usar margin auto */ margin: 10px auto; background-color: #000; border: 3px solid var(--accent-color); vertical-align: middle; transition: border-color 0.3s; max-width: 100%; /* Garantir que não ultrapasse a tela */ height: auto; /* Manter proporção */}
+        .game-info { margin-top: 10px; font-size: 1.1em; min-height: 25px; font-weight: bold; }
+        .instructions { font-size: 0.9em; color: #aaa; margin-top: 15px; }
+
+        /* Tetris Layout (Flexbox para melhor alinhamento) */
+        .tetris-layout { display: flex; justify-content: center; align-items: flex-start; gap: 25px; flex-wrap: wrap; }
+        .tetris-main-game { text-align: center; }
+        #tetrisCanvas { width: 240px; height: 480px; } /* Tamanho Fixo */
+        .tetris-side-info { text-align: center; padding-top: 0; /* Remover padding superior */ display: flex; flex-direction: column; align-items: center;}
+        #tetrisNextPiece { width: 96px; height: 96px; background-color: #000; border: 1px solid var(--border-color); margin: 10px 0; display: block; }
+
+        /* Pong Specific Styles */
+        #pongCanvas { width: 90%; max-width: 600px; height: auto; aspect-ratio: 3 / 2; background-color: #111; cursor: none; }
+
+        /* Snake Specific Styles */
+        #snakeCanvas { width: 90%; max-width: 400px; height: auto; aspect-ratio: 1 / 1; }
+
+        /* NOVO: Jogo da Memória Styles */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Grid responsivo */
+            gap: 10px;
+            max-width: 400px; /* Limitar largura */
+            margin: 20px auto;
+            perspective: 1000px; /* Efeito 3D */
+        }
+        .memory-card {
+            background-color: var(--accent-color);
+            height: 70px; /* Tamanho base */
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .memory-card .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Esconde o lado de trás */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+        }
+        .memory-card .card-front {
+            background-color: var(--tertiary-bg); /* Cor da frente (oculta) */
+             color: var(--text-color);
+             transform: rotateY(180deg); /* Virada inicialmente */
+        }
+         .memory-card .card-back {
+             background-color: var(--accent-color); /* Cor de trás (visível) */
+             /* Pode adicionar um ícone ou padrão aqui */
+             content: '?'; /* Exemplo */
+             color: var(--primary-bg-dark);
+         }
+
+        .memory-card.flipped {
+            transform: rotateY(180deg); /* Gira para mostrar a frente */
+        }
+        .memory-card.matched {
+            cursor: default;
+            background-color: var(--win-color); /* Cor quando encontra par */
+             opacity: 0.7;
+             transform: scale(0.95); /* Encolhe um pouco */
+             pointer-events: none; /* Impede novos cliques */
+        }
+        #memoryResult {
+             text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px;
+        }
+
+
+        /* Settings Styles */
+        .settings-section {
+            margin-bottom: 30px; /* Mais espaço */
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            transition: border-bottom-color 0.3s;
+        }
+        .settings-section:last-child {
+             border-bottom: none; /* Remover borda do último */
+        }
+
+
+        /* Footer Styles */
+        footer { text-align: center; padding: 15px; background-color: var(--secondary-bg); color: #888; /* position: fixed; */ /* REMOVIDO fixed para evitar sobreposição em telas pequenas */ /* bottom: 0; */ width: 100%; border-top: 1px solid var(--border-color); font-size: 0.9em; transition: background-color 0.3s, color 0.3s, border-top-color 0.3s; margin-top: 30px; /* Adicionar margem superior */}
+
+
+        /* --- MEDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* Telas Pequenas (Ex: Smartphones) */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.3em;
+            }
+             .tab button {
+                 padding: 12px 15px;
+                 font-size: 0.95em;
+            }
+
+            .game-container, .tool-container, .settings-container {
+                padding: 15px;
+                max-width: 95%; /* Ocupar quase toda largura */
+                 width: auto; /* Remover largura fixa */
+                 margin: 15px auto;
+            }
+
+            h2 { font-size: 1.3em; margin-bottom: 20px;}
+             h3 { font-size: 1.1em; }
+
+            button { padding: 10px 15px; font-size: 0.95em; }
+            input[type="text"], input[type="number"], select { max-width: 100%; padding: 9px; } /* Ocupar largura total */
+
+            /* Ajustes específicos de jogos */
+             #ticTacToe table { max-width: 90vw; /* Ajustar à largura da tela */}
+            #ticTacToe td { font-size: 2.5em; }
+
+             #wordSearchContainer { flex-direction: column; align-items: center; gap: 15px; }
+             #wordSearchList { max-width: 90%; margin-left: 0; }
+            #wordSearchGrid td { width: 25px; height: 25px; font-size: 0.9em; }
+
+            /* Canvas - manter proporção, limitar largura */
+             #tetrisCanvas { width: 200px; height: 400px; }
+             #tetrisNextPiece { width: 80px; height: 80px;}
+             .tetris-layout { gap: 15px; }
+
+            #snakeCanvas { max-width: 90vw; }
+            #pongCanvas { max-width: 95vw; }
+
+            .memory-grid { max-width: 95%; }
+             .memory-card { height: 60px; font-size: 1.8em; }
+
+             /* Settings */
+             .setting-option { display: block; /* Empilhar opções */ }
+        }
+
+         /* Telas muito pequenas */
+         @media (max-width: 480px) {
+            header h1 { font-size: 1.1em; }
+            .tab button { padding: 10px 12px; font-size: 0.9em; }
+            h2 { font-size: 1.2em; }
+            button { padding: 8px 12px; font-size: 0.9em; }
+            #ticTacToe td { font-size: 2em; }
+             #wordSearchGrid td { width: 22px; height: 22px; }
+             .memory-card { height: 55px; font-size: 1.6em; }
+             footer { font-size: 0.8em; padding: 10px; }
+             body { padding-bottom: 60px; } /* Ajustar espaço para footer menor */
+         }
+
+    </style>
+</head>
+<body>
+    <header>
+        <img id="logo" src="" alt="Logo" onerror="this.style.display='none'">
+        <h1>Mega Jogos Pro X+</h1> </header>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openGame(event, 'Calculadora')">Calculadora</button>
+        <button class="tablinks" onclick="openGame(event, 'Forca')">Forca</button>
+        <button class="tablinks" onclick="openGame(event, 'Velha')">Jogo da Velha</button>
+        <button class="tablinks" onclick="openGame(event, 'CacaPalavras')">Caça-Palavras</button>
+        <button class="tablinks" onclick="openGame(event, 'Memoria')">Jogo da Memória</button> <button class="tablinks" onclick="openGame(event, 'Tetris')">Tetris</button>
+        <button class="tablinks" onclick="openGame(event, 'Snake')">Snake</button>
+        <button class="tablinks" onclick="openGame(event, 'Pong')">Pong</button>
+        <button class="tablinks" onclick="openGame(event, 'Configuracoes')">Configurações</button>
+    </div>
+
+    <div id="Calculadora" class="tabcontent tool-container">
+        <h2>Calculadora Digital</h2>
+        <div class="calculator">
+            <div id="calcDisplay" class="calculator-display">0</div>
+            <div class="calculator-buttons">
+                 <button onclick="clearCalc()" class="clear">C</button> <button onclick="appendCalc('/')" class="operator">/</button>
+                 <button onclick="appendCalc('*')" class="operator">*</button>
+                 <button onclick="appendCalc('-')" class="operator">-</button>
+
+                 <button onclick="appendCalc('7')">7</button>
+                 <button onclick="appendCalc('8')">8</button>
+                 <button onclick="appendCalc('9')">9</button>
+                 <button onclick="appendCalc('+')" class="operator" style="grid-row: span 2;">+</button> <button onclick="appendCalc('4')">4</button>
+                 <button onclick="appendCalc('5')">5</button>
+                 <button onclick="appendCalc('6')">6</button>
+
+                 <button onclick="appendCalc('1')">1</button>
+                 <button onclick="appendCalc('2')">2</button>
+                 <button onclick="appendCalc('3')">3</button>
+                 <button onclick="calculateResult()" class="equals" style="grid-row: span 2;">=</button> <button onclick="appendCalc('0')" style="grid-column: span 2;">0</button> <button onclick="appendCalc('.')">.</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="Forca" class="tabcontent game-container">
+        <h2>Jogo da Forca</h2>
+        <div style="text-align: center; margin-bottom: 15px;">
+             <div class="setting-option" style="display:inline-block; margin-right: 15px;">
+                 <select id="forcaMode" onchange="toggleForcaDupla()" style="max-width: 150px;">
+                     <option value="single">Um Jogador</option>
+                     <option value="dupla">Dois Jogadores</option>
+                 </select>
+             </div>
+            <span id="forcaDuplaInput" style="display: none; margin-left: 10px;">
+                <input type="text" id="forcaCustomWord" placeholder="Jogador 1: Palavra" style="max-width:150px;">
+                <input type="text" id="forcaCustomHint" placeholder="Dica (opcional)" style="max-width:150px;">
+                <button onclick="startForcaGameDupla()">Iniciar Dupla</button>
+            </span>
+        </div>
+        <div style="text-align: center;">
+            <p id="forcaWordDisplay" style="font-size: 2em; letter-spacing: 5px; margin: 20px 0; min-height: 40px; user-select: none;">_ _ _ _</p>
+            <p id="forcaHintDisplay" style="min-height: 20px; font-style: italic; color: var(--highlight-color);"></p>
+            <input type="text" id="forcaLetter" maxlength="1" placeholder="Letra" style="width: 50px; text-align: center; margin-right: 5px;">
+            <button onclick="guessLetter()">Chutar</button>
+            <button id="forcaHintButton" onclick="giveForcaHint()" class="secondary" style="display:none;">Dica</button>
+            <p id="forcaResult" style="min-height: 25px; margin-top: 10px; font-weight: bold;"></p>
+            <p id="forcaWrongLetters" style="color: var(--error-color); min-height: 20px;"></p>
+            <button onclick="startForcaGame()">Reiniciar Jogo</button>
+        </div>
+    </div>
+
+    <div id="Velha" class="tabcontent game-container">
+        <h2>Jogo da Velha</h2>
+        <div id="ticTacToeSetup">
+            <label for="player1Name">J1:</label>
+            <input type="text" id="player1Name" value="Jogador 1" size="10">
+            <select id="player1Symbol"> <option value="X">X</option> <option value="O">O</option> <option value="△">△</option> <option value="☆">☆</option> </select>
+            <br>
+            <label for="player2Name">J2:</label>
+            <input type="text" id="player2Name" value="Jogador 2" size="10">
+            <span id="player2SymbolDisplay" style="margin-left: 10px; font-weight: bold;"></span>
+            <br>
+            <button onclick="startTicTacToeWithSettings()" style="margin-top: 10px;">Iniciar / Aplicar Nomes</button>
+        </div>
+        <div id="ticTacToe">
+            <table>
+                <tr> <td onclick="makeMove(this, 0, 0)"></td> <td onclick="makeMove(this, 0, 1)"></td> <td onclick="makeMove(this, 0, 2)"></td> </tr>
+                <tr> <td onclick="makeMove(this, 1, 0)"></td> <td onclick="makeMove(this, 1, 1)"></td> <td onclick="makeMove(this, 1, 2)"></td> </tr>
+                <tr> <td onclick="makeMove(this, 2, 0)"></td> <td onclick="makeMove(this, 2, 1)"></td> <td onclick="makeMove(this, 2, 2)"></td> </tr>
+            </table>
+        </div>
+        <p id="ticTacToeResult"></p>
+        <p id="ticTacToeGameOver" class="game-over-message"></p>
+        <div style="text-align: center;"> <button onclick="resetTicTacToe()">Reiniciar Jogo</button> </div>
+    </div>
+
+     <div id="CacaPalavras" class="tabcontent game-container">
+        <h2>Caça-Palavras</h2>
+         <div style="text-align:center; margin-bottom: 20px;">
+             <label for="wordSearchTheme">Tema:</label>
+             <select id="wordSearchTheme" onchange="changeWordSearchTheme(this.value)">
+                 <option value="tech">Tecnologia</option>
+                 <option value="animais">Animais</option>
+                 <option value="frutas">Frutas</option>
+                 <option value="paises">Países</option>
+             </select>
+             <button onclick="startWordSearch()" style="margin-left: 10px;">Gerar Novo Caça-Palavras</button>
+         </div>
+        <div id="wordSearchContainer">
+            <div id="wordSearchGrid"> <p>Escolha um tema e clique em "Gerar".</p> </div>
+            <div> <h3>Encontrar:</h3> <ul id="wordSearchList"></ul> </div>
+        </div>
+        <p id="wordSearchResult"></p>
+     </div>
+
+     <div id="Memoria" class="tabcontent game-container">
+         <h2>Jogo da Memória</h2>
+         <div class="game-info">
+             Movimentos: <span id="memoryMoves">0</span> | Pares Encontrados: <span id="memoryMatches">0</span>
+         </div>
+         <div id="memoryGrid" class="memory-grid">
+             </div>
+          <p id="memoryResult" class="win-message" style="display: none;"></p> <div style="text-align: center; margin-top: 20px;">
+             <button onclick="startMemoryGame()">Iniciar / Reiniciar</button>
+         </div>
+     </div>
+
+    <div id="Tetris" class="tabcontent game-container">
+        <h2>Tetris Clássico</h2>
+        <div class="tetris-layout">
+             <div class="tetris-main-game">
+                  <canvas id="tetrisCanvas"></canvas> <div class="game-info"> Pontos: <span id="tetrisScore">0</span> </div>
+                  <p id="tetrisGameOver" class="game-over-message">GAME OVER!</p>
+             </div>
+             <div class="tetris-side-info">
+                 <h4>Próxima Peça:</h4>
+                 <canvas id="tetrisNextPiece"></canvas> <div style="text-align: center; margin-top: 20px;">
+                     <button onclick="startTetris()">Iniciar / Reiniciar</button>
+                 </div>
+                 <p class="instructions" style="margin-top: 20px;">Setas: ← → Mover, ↓ Acelerar, ↑ Girar.</p>
+             </div>
+        </div>
+    </div>
+
+
+    <div id="Snake" class="tabcontent game-container game-canvas-container">
+        <h2>Jogo da Cobrinha (Snake)</h2>
+        <canvas id="snakeCanvas"></canvas> <div class="game-info"> Pontos: <span id="snakeScore">0</span> </div>
+        <p id="snakeGameOver" class="game-over-message">GAME OVER!</p>
+        <div style="text-align: center; margin-top: 10px;"> <button onclick="startSnake()">Iniciar / Reiniciar</button> </div>
+        <p class="instructions">Use as Setas do teclado para mover.</p>
+    </div>
+
+    <div id="Pong" class="tabcontent game-container pong-container">
+        <h2>Pong Clássico</h2>
+        <canvas id="pongCanvas"></canvas> <div class="game-info">
+             Jogador 1: <span id="pongScoreLeft">0</span> | Jogador 2: <span id="pongScoreRight">0</span>
+        </div>
+        <p id="pongGameOver" class="game-over-message"></p>
+        <div style="text-align: center; margin-top: 10px;"> <button onclick="startPong()">Iniciar / Reiniciar</button> </div>
+        <p class="instructions">Jogador 1: Teclas 'W' (cima) e 'S' (baixo). <br>Jogador 2: Setas ↑ e ↓.</p>
+    </div>
+
+
+    <div id="Configuracoes" class="tabcontent settings-container">
+        <h2>Configurações Gerais</h2>
+
+        <div class="settings-section">
+            <h3><i class="fas fa-palette"></i> Tema Visual</h3> <div class="setting-option">
+                 <input type="radio" id="themeDark" name="theme" value="dark" onchange="setTheme(this.value)">
+                 <label for="themeDark">Escuro</label>
+             </div>
+             <div class="setting-option">
+                 <input type="radio" id="themeLight" name="theme" value="light" onchange="setTheme(this.value)">
+                 <label for="themeLight">Claro</label>
+             </div>
+        </div>
+
+         <div class="settings-section">
+             <h3><i class="fas fa-tachometer-alt"></i> Nível de Dificuldade</h3>
+             <div style="margin-bottom: 15px;">
+                 <label for="snakeDifficultySelector">Snake (Velocidade):</label>
+                 <select id="snakeDifficultySelector" onchange="setSnakeDifficulty(this.value)">
+                     <option value="150">Normal</option>
+                     <option value="100">Rápido</option>
+                     <option value="200">Lento</option>
+                 </select>
+                 <span style="font-size: 0.85em; margin-left: 5px;">(Reinicie o jogo)</span>
+             </div>
+             <div>
+                 <label for="tetrisDifficultySelector">Tetris (Velocidade Inicial):</label>
+                 <select id="tetrisDifficultySelector" onchange="setTetrisDifficulty(this.value)">
+                     <option value="1000">Normal</option>
+                     <option value="750">Rápido</option>
+                     <option value="1300">Lento</option>
+                 </select>
+                  <span style="font-size: 0.85em; margin-left: 5px;">(Reinicie o jogo)</span>
+             </div>
+         </div>
+
+         <div class="settings-section">
+             <h3><i class="fas fa-paint-brush"></i> Customização</h3>
+             <div style="margin-bottom: 15px;">
+                 <label for="snakeSkinSelector">Skin da Cobra (Snake):</label>
+                 <select id="snakeSkinSelector" onchange="setSnakeSkin(this.value)">
+                     <option value="green">Verde Clássico</option>
+                     <option value="blue">Azul Moderno</option>
+                     <option value="rainbow">Arco-Íris</option>
+                     <option value="matrix">Matrix Code</option>
+                 </select>
+                  <span style="font-size: 0.85em; margin-left: 5px;">(Reinicie o jogo)</span>
+             </div>
+             <div>
+                  <label for="wordSearchSizeSelector">Tamanho Caça-Palavras:</label>
+                  <select id="wordSearchSizeSelector" onchange="setWordSearchSize(this.value)">
+                      <option value="12">Padrão (12x12)</option>
+                      <option value="10">Pequeno (10x10)</option>
+                      <option value="15">Grande (15x15)</option>
+                  </select>
+                   <span style="font-size: 0.85em; margin-left: 5px;">(Gere um novo)</span>
+             </div>
+        </div>
+
+         <div class="settings-section">
+             <h3><i class="fas fa-volume-up"></i> Som</h3>
+              <div class="setting-option">
+                  <input type="checkbox" id="soundEnabled" name="sound" onchange="setSoundEnabled(this.checked)">
+                  <label for="soundEnabled">Habilitar Efeitos Sonoros</label>
+              </div>
+              <p style="font-size: 0.9em; color: #aaa;">(Funcionalidade de som ainda não implementada)</p>
+         </div>
+
+         <div class="settings-section">
+            <h3><i class="fas fa-info-circle"></i> Sobre</h3>
+            <p><strong>Mega Jogos Pro X+</strong> - Sua central de jogos clássicos e ferramentas!</p>
+             <p>Este site foi aprimorado para incluir mais jogos e opções, além de ser responsivo para funcionar bem em desktops e celulares.</p>
+            <p><em>Nota:</em> Jogos extremamente complexos (como Geometry Dash ou com chefões avançados) estão fora do escopo desta versão.</p>
+             <p id="deviceTypeInfo" style="font-size: 0.9em; color: #bbb; margin-top:10px;"></p>
+        </div>
+    </div>
+
+
+    <footer> Mega Jogos Pro X+ &copy; 2025 - Adaptado para Desktop e Mobile </footer>
+
+    <script>
+        /* ========== Global Settings & State ========== */
+        const defaultSettings = { // Valores padrão
+            theme: 'dark',
+            snakeSkin: 'green',
+            snakeDifficulty: '150', // ms interval
+            tetrisDifficulty: '1000', // ms interval
+            wordSearchSize: '12', // grid dimension
+            soundEnabled: false
+        };
+        let settings = {}; // Será preenchido com localStorage ou defaults
+
+        let activeGameInterval = null; // ID do setInterval do jogo ativo
+        let activeGameTimeout = null; // ID do setTimeout (ex: Jogo da Memória)
+        let activeKeyListener = null;  // Referência à função de listener de teclado ativa
+        let activeKeyListeners = {}; // Para jogos com múltiplos listeners (keydown/keyup como Pong)
+
+
+        /* ========== LocalStorage Management ========== */
+        function loadSettings() {
+            settings = { ...defaultSettings }; // Começa com os padrões
+            for (const key in defaultSettings) {
+                const storedValue = localStorage.getItem(key);
+                if (storedValue !== null) {
+                    // Tentar converter para boolean se for 'true'/'false'
+                    if (storedValue === 'true') settings[key] = true;
+                    else if (storedValue === 'false') settings[key] = false;
+                    else settings[key] = storedValue;
+                }
+            }
+            console.log("Settings loaded:", settings);
+        }
+
+        function saveSetting(key, value) {
+             if (key in defaultSettings) { // Salvar apenas settings conhecidos
+                 settings[key] = value;
+                 localStorage.setItem(key, value);
+                 console.log(`Setting saved: ${key} = ${value}`);
+            } else {
+                 console.warn(`Attempted to save unknown setting: ${key}`);
+             }
+        }
+
+        /* ========== Theme Manager ========== */
+        function applyTheme(theme) {
+            document.documentElement.classList.remove('theme-dark', 'theme-light');
+            document.documentElement.classList.add(theme === 'light' ? 'theme-light' : 'theme-dark');
+             // Atualiza o radio button correspondente
+            const themeRadio = document.getElementById(theme === 'light' ? 'themeLight' : 'themeDark');
+            if (themeRadio) themeRadio.checked = true;
+        }
+
+        function setTheme(theme) {
+             saveSetting('theme', theme);
+            applyTheme(theme);
+        }
+
+        /* ========== Snake Skin Manager ========== */
+        function applySnakeSkinPreference() {
+            const selector = document.getElementById('snakeSkinSelector');
+            if (selector) selector.value = settings.snakeSkin;
+        }
+        function setSnakeSkin(skinName) {
+             saveSetting('snakeSkin', skinName);
+        }
+
+         /* ========== Difficulty Settings ========== */
+         function applyDifficultyPreferences() {
+             const snakeSelector = document.getElementById('snakeDifficultySelector');
+             if (snakeSelector) snakeSelector.value = settings.snakeDifficulty;
+             const tetrisSelector = document.getElementById('tetrisDifficultySelector');
+             if (tetrisSelector) tetrisSelector.value = settings.tetrisDifficulty;
+         }
+         function setSnakeDifficulty(difficulty) {
+              saveSetting('snakeDifficulty', difficulty);
+         }
+         function setTetrisDifficulty(difficulty) {
+              saveSetting('tetrisDifficulty', difficulty);
+         }
+
+         /* ========== Word Search Size Setting ========== */
+         function applyWordSearchSizePreference() {
+             const selector = document.getElementById('wordSearchSizeSelector');
+             if (selector) selector.value = settings.wordSearchSize;
+         }
+         function setWordSearchSize(size) {
+              saveSetting('wordSearchSize', size);
+         }
+
+         /* ========== Sound Setting ========== */
+         function applySoundPreference() {
+             const checkbox = document.getElementById('soundEnabled');
+             if (checkbox) checkbox.checked = settings.soundEnabled;
+         }
+          function setSoundEnabled(enabled) {
+              saveSetting('soundEnabled', enabled);
+              // Aqui você adicionaria a lógica para mutar/desmutar sons globais, se implementado.
+              console.log("Sound enabled set to:", enabled);
+          }
+
+
+        /* ========== Interval and Listener Management ========== */
+        function clearActiveGame() {
+            console.log("Clearing active game state...");
+            if (activeGameInterval) {
+                clearInterval(activeGameInterval);
+                activeGameInterval = null;
+                console.log("Interval cleared.");
+            }
+             if (activeGameTimeout) {
+                 clearTimeout(activeGameTimeout);
+                 activeGameTimeout = null;
+                 console.log("Timeout cleared.");
+             }
+
+             // Remover listeners específicos
+            if (activeKeyListener) {
+                document.removeEventListener('keydown', activeKeyListener);
+                 activeKeyListener = null;
+                 console.log("Single keydown listener removed.");
+            }
+             // Remover múltiplos listeners (como keydown/keyup do Pong)
+             if (Object.keys(activeKeyListeners).length > 0) {
+                  if(activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
+                  if(activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
+                  activeKeyListeners = {};
+                  console.log("Multiple key listeners removed.");
+             }
+
+            // Esconder todas as mensagens de 'Game Over' e 'Win'
+            document.querySelectorAll('.game-over-message, .win-message').forEach(el => {
+                el.classList.remove('visible');
+                 el.style.display = 'none'; // Garantir que esteja escondido
+            });
+        }
+
+        /* ========== Tab Control ========== */
+        function openGame(evt, gameName) {
+            clearActiveGame(); // Parar jogo anterior antes de mudar de aba
+
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            const activeTabContent = document.getElementById(gameName);
+            if(activeTabContent) activeTabContent.style.display = "block";
+            if(evt && evt.currentTarget) evt.currentTarget.className += " active";
+
+             // Focar no input principal do jogo, se aplicável (melhora UX)
+             if (gameName === 'Forca') {
+                 const input = document.getElementById('forcaLetter');
+                 if (input && !input.disabled) input.focus();
+             }
+        }
+
+        /* ========== Device Type Info (Optional) ========== */
+         function displayDeviceInfo() {
+             const infoEl = document.getElementById('deviceTypeInfo');
+             if (!infoEl) return;
+             let deviceInfo = "Dispositivo: Desconhecido";
+             // Uma detecção simples (NÃO 100% confiável)
+             if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(navigator.userAgent)) {
+                 deviceInfo = "Dispositivo: Tablet (Layout Responsivo)";
+             } else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(navigator.userAgent)) {
+                 deviceInfo = "Dispositivo: Celular (Layout Responsivo)";
+             } else {
+                  deviceInfo = "Dispositivo: Desktop/Laptop (Layout Responsivo)";
+              }
+              infoEl.textContent = deviceInfo;
+         }
+
+
+        // =============================================
+        // ========== Inicialização da Página ==========
+        // =============================================
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSettings(); // Carregar configurações salvas ou padrão
+            applyTheme(settings.theme);
+            applySnakeSkinPreference();
+             applyDifficultyPreferences();
+             applyWordSearchSizePreference();
+             applySoundPreference(); // Aplicar estado do som (mesmo que não implementado)
+             displayDeviceInfo(); // Mostrar tipo de dispositivo detectado
+
+            // Abrir a primeira aba por padrão (Calculadora)
+            const firstTabButton = document.querySelector(".tablinks");
+            if (firstTabButton) {
+                 // Encontrar o target ID do onclick
+                 const targetIdMatch = firstTabButton.getAttribute('onclick').match(/'([^']+)'/);
+                 if (targetIdMatch && targetIdMatch[1]) {
+                     const targetId = targetIdMatch[1];
+                     openGame({ currentTarget: firstTabButton }, targetId); // Usar openGame para setar corretamente
+                 }
+            }
+            initTicTacToe(); // Inicializar nomes/símbolos do Jogo da Velha
+             startWordSearch(false); // Preparar Caça-Palavras sem gerar grid ainda
+        });
+
+
+        // =======================================
+        // ========== Lógica dos Jogos ==========
+        // =======================================
+
+        /* ========== Calculadora (Layout ajustado no HTML) ========== */
+        let calcExpression = ""; const calcDisplay = document.getElementById("calcDisplay");
+        function appendCalc(value) { if (calcDisplay.innerText === "Erro") { clearCalc(); } const lastChar = calcExpression.slice(-1); if (['/', '*', '-', '+'].includes(lastChar) && ['/', '*', '-', '+'].includes(value)) return; if (value === '.' && calcExpression.split(/[\/\*\-\+]/).pop().includes('.')) return; if (calcExpression === "" && ['/', '*', '.'].includes(value)) calcExpression = "0"; if (calcDisplay.innerText === '0' && value !== '.' && !['/', '*', '-', '+'].includes(value)) { calcExpression = value; } else { calcExpression += value; } calcDisplay.innerText = calcExpression || "0"; }
+        function calculateResult() { if (calcExpression === "" || calcDisplay.innerText === "Erro") return; try { const result = eval(calcExpression.replace(/--/g, '+')); if (isNaN(result) || !isFinite(result)) throw new Error("Resultado inválido"); calcDisplay.innerText = result; calcExpression = result.toString(); } catch (e) { calcDisplay.innerText = "Erro"; calcExpression = ""; console.error("Calc Error:", e); } }
+        function clearCalc() { calcExpression = ""; calcDisplay.innerText = "0"; }
+
+
+        /* ========== Jogo da Forca (Com Dica e Modo Dupla) ========== */
+        let forcaWord = '', forcaHint = '', forcaDisplay = [], forcaWrong = [], forcaMaxErrors = 6, forcaGameOver = false, forcaHintsUsed = 0;
+        const forcaWordsWithHints = [ /* ... lista de palavras ... */
+             ["javascript", "Linguagem de script web popular"],
+             ["programacao", "Ato de escrever código para computadores"],
+             ["desenvolvimento", "Processo de criação de software ou sistemas"],
+             ["computador", "Máquina eletrônica que processa dados"],
+             ["tecnologia", "Aplicação do conhecimento científico"],
+             ["algoritmo", "Sequência finita de passos para resolver um problema"],
+             ["interface", "Ponto de interação entre usuário e máquina"],
+             ["aplicativo", "Software projetado para tarefas específicas"],
+             ["internet", "Rede mundial de computadores interconectados"],
+             ["navegador", "Software usado para acessar a World Wide Web"],
+             ["openai", "Empresa de pesquisa em inteligência artificial"],
+             ["python", "Linguagem de programação versátil e legível"],
+             ["react", "Biblioteca JavaScript para construir interfaces de usuário"],
+             ["componente", "Parte reutilizável de uma interface de usuário"],
+             ["framework", "Estrutura de software que facilita o desenvolvimento"],
+             ["debugging", "Processo de encontrar e corrigir erros em código"]
+        ];
+        const forcaWordDisplayEl = document.getElementById("forcaWordDisplay");
+        const forcaHintDisplayEl = document.getElementById("forcaHintDisplay");
+        const forcaResultEl = document.getElementById("forcaResult");
+        const forcaWrongLettersEl = document.getElementById("forcaWrongLetters");
+        const forcaCustomWordInput = document.getElementById("forcaCustomWord");
+        const forcaCustomHintInput = document.getElementById("forcaCustomHint");
+        const forcaHintButton = document.getElementById("forcaHintButton");
+        const forcaLetterInput = document.getElementById("forcaLetter");
+
+        function startForcaGame() {
+             clearActiveGame();
+             forcaGameOver = false; forcaHintsUsed = 0; forcaWrong = [];
+             forcaResultEl.innerText = ""; forcaWrongLettersEl.innerText = ""; forcaHintDisplayEl.innerText = "";
+             forcaLetterInput.value = ''; forcaLetterInput.disabled = false;
+             forcaHintButton.style.display = 'none'; forcaHintButton.disabled = false;
+
+             const forcaMode = document.getElementById("forcaMode").value;
+             if (forcaMode === "single") {
+                 const randomIndex = Math.floor(Math.random() * forcaWordsWithHints.length);
+                 [forcaWord, forcaHint] = forcaWordsWithHints[randomIndex].map(s => s.toLowerCase());
+                 setupForcaDisplay();
+                 forcaHintButton.style.display = 'inline-block';
+                 if (forcaHint) forcaHintDisplayEl.innerText = `Dica: ${forcaHint}`;
+                 forcaLetterInput.focus();
+             } else {
+                 forcaWordDisplayEl.innerText = "Modo Dupla: Jogador 1, digite palavra e dica, depois clique 'Iniciar Dupla'.";
+                 forcaLetterInput.disabled = true;
+                 document.getElementById("forcaDuplaInput").style.display = 'inline-block';
+                 forcaCustomWordInput.focus();
+             }
+        }
+        function startForcaGameDupla() {
+             forcaWord = forcaCustomWordInput.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remove acentos
+             forcaHint = forcaCustomHintInput.value.trim();
+             if (!forcaWord || !/^[a-zç]+$/.test(forcaWord)) {
+                 alert("Palavra inválida! Use apenas letras (sem acentos, exceto 'ç')."); return;
+             }
+             forcaCustomWordInput.value = ''; forcaCustomHintInput.value = '';
+             document.getElementById("forcaDuplaInput").style.display = 'none';
+             setupForcaDisplay();
+             forcaLetterInput.disabled = false; forcaLetterInput.focus();
+             forcaResultEl.innerText = `Adivinhe a palavra! ${forcaMaxErrors} tentativas.`;
+             if (forcaHint) forcaHintDisplayEl.innerText = `Dica: ${forcaHint}`;
+         }
+        function setupForcaDisplay() {
+             forcaDisplay = Array(forcaWord.length).fill("_");
+             forcaWordDisplayEl.innerText = forcaDisplay.join(" ");
+             updateForcaStatus();
+        }
+        function updateForcaStatus() { /* ... (igual ao anterior) ... */
+             if (forcaGameOver) return;
+             const remainingAttempts = forcaMaxErrors - forcaWrong.length;
+              if (!forcaDisplay.includes("_")) {
+                  forcaResultEl.innerText = `🎉 Parabéns! Você venceu! Palavra: ${forcaWord}`;
+                  forcaResultEl.style.color = 'var(--win-color)';
+                  forcaGameOver = true; forcaLetterInput.disabled = true; forcaHintButton.disabled = true;
+              } else if (remainingAttempts <= 0) {
+                  forcaResultEl.innerText = `❌ Fim de jogo! Perdeu. Palavra era: ${forcaWord}`;
+                   forcaResultEl.style.color = 'var(--error-color)';
+                  forcaWordDisplayEl.innerText = forcaWord.split('').join(' ');
+                  forcaGameOver = true; forcaLetterInput.disabled = true; forcaHintButton.disabled = true;
+              } else {
+                   forcaResultEl.innerText = `Você tem ${remainingAttempts} tentativa(s) restante(s).`;
+                   forcaResultEl.style.color = 'var(--text-color)'; // Reset color
+              }
+        }
+        function guessLetter() { /* ... (igual ao anterior, mas com foco) ... */
+             if (forcaGameOver || !forcaWord) return;
+             let letter = forcaLetterInput.value.toLowerCase();
+             forcaLetterInput.value = ""; forcaLetterInput.focus(); // Limpa e foca
+             if (letter.length !== 1 || !/[a-zç]/.test(letter)) {
+                  forcaResultEl.innerText = "Digite uma única letra válida (a-z ou ç)."; return;
+             }
+             if (forcaDisplay.includes(letter) || forcaWrong.includes(letter)) {
+                   forcaResultEl.innerText = `Letra '${letter}' já foi tentada.`; return;
+             }
+             let hit = false;
+             for (let i = 0; i < forcaWord.length; i++) {
+                  if (forcaWord[i] === letter) { forcaDisplay[i] = letter; hit = true; }
+             }
+             if (!hit) {
+                  forcaWrong.push(letter);
+                  forcaWrongLettersEl.innerText = "Erradas: " + forcaWrong.join(", ");
+             }
+             forcaWordDisplayEl.innerText = forcaDisplay.join(" ");
+             updateForcaStatus();
+        }
+        function giveForcaHint() { /* ... (igual ao anterior) ... */
+             if (forcaGameOver || forcaHintsUsed >= 1 || document.getElementById("forcaMode").value !== 'single') {
+                 forcaHintButton.disabled = true;
+                  if (forcaHintsUsed >= 1) forcaResultEl.innerText = "Você já usou sua dica!";
+                  return;
+             }
+             let hiddenIndices = [];
+             for(let i=0; i<forcaDisplay.length; i++) { if (forcaDisplay[i] === '_') hiddenIndices.push(i); }
+
+             if (hiddenIndices.length > 1) { // Precisa de pelo menos 2 letras faltando para valer a pena
+                 forcaHintsUsed++;
+                 const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+                 const hintLetter = forcaWord[randomIndex];
+                 for(let i=0; i<forcaWord.length; i++) { if(forcaWord[i] === hintLetter && forcaDisplay[i] === '_') forcaDisplay[i] = hintLetter; }
+                 forcaWordDisplayEl.innerText = forcaDisplay.join(" ");
+                 forcaResultEl.innerText = `Dica usada! Letra '${hintLetter}' revelada.`;
+                 forcaHintButton.disabled = true;
+                 updateForcaStatus();
+             } else {
+                  forcaResultEl.innerText = "Dica não disponível (poucas letras restantes).";
+                  forcaHintButton.disabled = true;
+             }
+        }
+        function toggleForcaDupla() { /* ... (igual ao anterior) ... */
+             let mode = document.getElementById("forcaMode").value;
+             const duplaInputSpan = document.getElementById("forcaDuplaInput");
+             duplaInputSpan.style.display = (mode === "dupla") ? "inline-block" : "none";
+             startForcaGame(); // Reinicia o jogo ao trocar de modo
+        }
+
+
+        /* ========== Jogo da Velha (Com mais símbolos e game over melhorado) ========== */
+        let ticTacToeBoard, currentPlayerSymbol, player1Name, player2Name, player1Symbol, player2Symbol, ticTacToeGameOver;
+        const ticTacToeCells = document.querySelectorAll("#ticTacToe td");
+        const ticTacToeResultEl = document.getElementById("ticTacToeResult");
+        const ticTacToeGameOverEl = document.getElementById("ticTacToeGameOver");
+        const player1NameInput = document.getElementById("player1Name"); const player2NameInput = document.getElementById("player2Name"); const player1SymbolSelect = document.getElementById("player1Symbol"); const player2SymbolDisplay = document.getElementById("player2SymbolDisplay");
+        const ticTacToeSymbols = ['X', 'O', '△', '☆']; // Símbolos disponíveis
+        let availableP2Symbols = [];
+
+        function updateP2SymbolOptions() { // Atualiza opções do P2 baseado na escolha do P1
+             player1Symbol = player1SymbolSelect.value;
+             availableP2Symbols = ticTacToeSymbols.filter(s => s !== player1Symbol);
+             player2Symbol = availableP2Symbols[0]; // Pega o primeiro disponível como padrão
+             player2SymbolDisplay.textContent = `(${player2Symbol})`; // Mostra o símbolo do P2 (não selecionável diretamente)
+         }
+
+        function initTicTacToe() {
+             player1Name = player1NameInput.value.trim() || "Jogador 1";
+             player2Name = player2NameInput.value.trim() || "Jogador 2";
+             updateP2SymbolOptions(); // Define P1 e P2 symbols
+
+             ticTacToeBoard = [["", "", ""], ["", "", ""], ["", "", ""]];
+             currentPlayerSymbol = player1Symbol;
+             ticTacToeGameOver = false;
+             ticTacToeGameOverEl.classList.remove('visible'); // Esconde mensagem de fim de jogo
+             ticTacToeGameOverEl.style.display = 'none'; // Garante display none
+             ticTacToeResultEl.style.display = 'block'; // Mostra status
+             ticTacToeCells.forEach((cell, index) => {
+                 cell.innerText = "";
+                 cell.classList.remove('win-cell');
+                 const row = Math.floor(index / 3);
+                 const col = index % 3;
+                 // Reatribuir onclick para garantir que funcione após reset
+                 cell.onclick = () => makeMove(cell, row, col);
+             });
+             updateTicTacToeStatus();
+        }
+        function startTicTacToeWithSettings() { initTicTacToe(); } // Apenas reinicia com os nomes/símbolos atuais
+        function updateTicTacToeStatus() { if (ticTacToeGameOver) return; const currentPlayerName = (currentPlayerSymbol === player1Symbol) ? player1Name : player2Name; ticTacToeResultEl.innerText = `Vez de ${currentPlayerName} (${currentPlayerSymbol})`; }
+        function makeMove(cell, row, col) { /* ... (igual, mas com display toggle) ... */
+             if (ticTacToeGameOver || ticTacToeBoard[row][col] !== "") return;
+             ticTacToeBoard[row][col] = currentPlayerSymbol; cell.innerText = currentPlayerSymbol; cell.onclick = null;
+             if (checkTicTacToeWinner(row, col)) {
+                 const winnerName = (currentPlayerSymbol === player1Symbol) ? player1Name : player2Name;
+                 ticTacToeResultEl.style.display = 'none'; // Esconde status
+                 ticTacToeGameOverEl.innerText = `🎉 ${winnerName} (${currentPlayerSymbol}) venceu!`;
+                  ticTacToeGameOverEl.style.display = 'block'; // Mostra fim de jogo
+                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOver = true; highlightWinningCells();
+             } else if (isBoardFull()) {
+                 ticTacToeResultEl.style.display = 'none';
+                 ticTacToeGameOverEl.innerText = "😐 Empate!";
+                 ticTacToeGameOverEl.style.display = 'block';
+                 ticTacToeGameOverEl.classList.add('visible'); ticTacToeGameOver = true;
+             } else {
+                 currentPlayerSymbol = (currentPlayerSymbol === player1Symbol) ? player2Symbol : player1Symbol; updateTicTacToeStatus();
+             }
+        }
+        function checkTicTacToeWinner(row, col) { /* ... (lógica igual) ... */
+              const symbol = ticTacToeBoard[row][col]; if (!symbol) return false;
+              // Check row
+              if (ticTacToeBoard[row][0] === symbol && ticTacToeBoard[row][1] === symbol && ticTacToeBoard[row][2] === symbol) return true;
+              // Check column
+              if (ticTacToeBoard[0][col] === symbol && ticTacToeBoard[1][col] === symbol && ticTacToeBoard[2][col] === symbol) return true;
+              // Check diagonals
+              if (row === col && ticTacToeBoard[0][0] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][2] === symbol) return true;
+              if (row + col === 2 && ticTacToeBoard[0][2] === symbol && ticTacToeBoard[1][1] === symbol && ticTacToeBoard[2][0] === symbol) return true;
+              return false;
+        }
+        function isBoardFull() { return ticTacToeBoard.flat().every(cell => cell !== ""); }
+        function highlightWinningCells() { /* ... (lógica igual) ... */
+             const symbol = currentPlayerSymbol;
+             const winningCombinations = [ [[0,0],[0,1],[0,2]],[[1,0],[1,1],[1,2]],[[2,0],[2,1],[2,2]], [[0,0],[1,0],[2,0]],[[0,1],[1,1],[2,1]],[[0,2],[1,2],[2,2]], [[0,0],[1,1],[2,2]],[[0,2],[1,1],[2,0]] ];
+             for (const combination of winningCombinations) { const [a,b,c] = combination; if(ticTacToeBoard[a[0]][a[1]] === symbol && ticTacToeBoard[b[0]][b[1]] === symbol && ticTacToeBoard[c[0]][c[1]] === symbol) { combination.forEach(([r, c]) => { document.querySelector("#ticTacToe table").rows[r].cells[c].classList.add('win-cell'); }); break; } }
+         }
+        function resetTicTacToe() { initTicTacToe(); } // Mudamos o botão para chamar init diretamente
+        player1SymbolSelect.addEventListener('change', updateP2SymbolOptions);
+
+
+        /* ========== Caça-Palavras (Com Temas e Tamanho Configurável) ========== */
+        const wordSearchGridEl = document.getElementById("wordSearchGrid"); const wordSearchListEl = document.getElementById("wordSearchList"); const wordSearchResultEl = document.getElementById("wordSearchResult");
+         const wordSearchThemes = {
+             tech: ["HTML", "CSS", "JAVASCRIPT", "PYTHON", "REACT", "ANGULAR", "VUE", "NODEJS", "DATABASE", "ALGORITHM", "GITHUB", "TERMINAL", "SERVER", "CLIENT", "API", "CLOUD"],
+             animais: ["CACHORRO", "GATO", "ELEFANTE", "GIRAFA", "LEAO", "TIGRE", "MACACO", "ZEBRA", "URSO", "COBRA", "JACARE", "PASSARO", "PEIXE", "TUBARAO", "BALEIA", "POLVO"],
+             frutas: ["MACA", "BANANA", "LARANJA", "UVA", "MORANGO", "ABACAXI", "MELANCIA", "MANGA", "KIWI", "PERA", "ABACATE", "LIMAO", "CEREJA", "MELAO", "GOIABA", "FIGO"],
+             paises: ["BRASIL", "ARGENTINA", "PORTUGAL", "ESPANHA", "FRANCA", "ITALIA", "ALEMANHA", "JAPAO", "CHINA", "INDIA", "RUSSIA", "CANADA", "MEXICO", "EGITO", "AUSTRALIA", "CHILE"]
+         };
+        let currentWordSearchTheme = 'tech'; // Tema inicial
+        let wordSearchWords = []; let wordSearchGrid = []; let foundWords = []; let selectedCells = []; let isSelecting = false; let WS_GRID_SIZE = 12; // Tamanho padrão
+
+         function changeWordSearchTheme(theme) {
+             currentWordSearchTheme = theme;
+             startWordSearch(); // Gera um novo grid com o novo tema
+         }
+
+        function startWordSearch(generate = true) { // Parâmetro para controlar geração
+             clearActiveGame();
+              WS_GRID_SIZE = parseInt(settings.wordSearchSize) || 12; // Usa o tamanho da configuração
+             if (generate) {
+                 wordSearchWords = getRandomWords(wordSearchThemes[currentWordSearchTheme], Math.floor(WS_GRID_SIZE * 0.8)); // Seleciona palavras aleatórias do tema
+                 generateGrid();
+                 placeWords();
+                 displayWordSearch();
+             } else {
+                  // Apenas prepara a interface se não for para gerar
+                  wordSearchGridEl.innerHTML = '<p>Escolha um tema e clique em "Gerar".</p>';
+                  wordSearchListEl.innerHTML = '';
+                  wordSearchResultEl.textContent = '';
+             }
+        }
+         function getRandomWords(wordList, count) {
+              const shuffled = [...wordList].sort(() => 0.5 - Math.random());
+              return shuffled.slice(0, count);
+         }
+        function generateGrid() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
+             wordSearchGrid = []; const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÇ"; // Adiciona Ç
+             for (let r = 0; r < WS_GRID_SIZE; r++) { wordSearchGrid[r] = []; for (let c = 0; c < WS_GRID_SIZE; c++) { wordSearchGrid[r][c] = { letter: letters[Math.floor(Math.random() * letters.length)], found: false }; } }
+        }
+        function placeWords() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
+             const directions = [ { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: -1, dc: 0 }, { dr: 1, dc: 1 }, { dr: 1, dc: -1 }, { dr: -1, dc: 1 }, { dr: -1, dc: -1 } ];
+             wordSearchWords.forEach(word => { let placed = false; let attempts = 0; while (!placed && attempts < 100) { attempts++; const dir = directions[Math.floor(Math.random() * directions.length)]; const startRow = Math.floor(Math.random() * WS_GRID_SIZE); const startCol = Math.floor(Math.random() * WS_GRID_SIZE); let canPlace = true; const cellsToPlace = []; for (let i = 0; i < word.length; i++) { const r = startRow + i * dir.dr; const c = startCol + i * dir.dc; if (r < 0 || r >= WS_GRID_SIZE || c < 0 || c >= WS_GRID_SIZE || (wordSearchGrid[r][c].word && wordSearchGrid[r][c].letter !== word[i])) { // Verifica se já tem palavra OU letra diferente
+                  canPlace = false; break; } cellsToPlace.push({ r, c, letter: word[i] }); } if (canPlace) { cellsToPlace.forEach(info => { wordSearchGrid[info.r][info.c] = { letter: info.letter, found: false, word: word }; }); placed = true; } } if (!placed) console.warn(`Could not place word: ${word}`); });
+        }
+        function displayWordSearch() { /* ... (lógica igual, mas usa WS_GRID_SIZE) ... */
+              let html = "<table>";
+              // Ajusta o tamanho da fonte baseado no tamanho do grid
+              const fontSize = WS_GRID_SIZE > 13 ? '0.8em' : (WS_GRID_SIZE < 12 ? '1.1em' : '1em');
+              const cellSize = WS_GRID_SIZE > 13 ? '25px' : (WS_GRID_SIZE < 12 ? '35px' : '30px');
+
+              for (let r = 0; r < WS_GRID_SIZE; r++) { html += "<tr>"; for (let c = 0; c < WS_GRID_SIZE; c++) { html += `<td data-row="${r}" data-col="${c}" style="width:${cellSize}; height:${cellSize}; font-size:${fontSize};">${wordSearchGrid[r][c].letter}</td>`; } html += "</tr>"; } html += "</table>";
+              wordSearchGridEl.innerHTML = html;
+              const cells = wordSearchGridEl.querySelectorAll('td'); cells.forEach(cell => { cell.addEventListener('mousedown', handleMouseDown); cell.addEventListener('mouseover', handleMouseOver); });
+              // Adiciona listener global para mouseup para evitar problemas se soltar fora do grid
+              document.removeEventListener('mouseup', handleMouseUp); // Remove anterior se houver
+              document.addEventListener('mouseup', handleMouseUp);
+              wordSearchListEl.innerHTML = ""; foundWords = [];
+              wordSearchWords.sort().forEach(word => { const li = document.createElement('li'); li.textContent = word; li.id = `word-${word}`; wordSearchListEl.appendChild(li); });
+              wordSearchResultEl.textContent = "Encontre as palavras!";
+         }
+        function handleMouseDown(event) { if (event.target.tagName !== 'TD') return; isSelecting = true; clearSelection(); selectCell(event.target); event.preventDefault(); }
+        function handleMouseOver(event) { if (isSelecting && event.target.tagName === 'TD') { selectCell(event.target); } }
+        function handleMouseUp() { if (isSelecting) { isSelecting = false; checkSelectedWord(); } }
+        function selectCell(cell) { if (!cell || cell.classList.contains('found') || cell.classList.contains('selecting')) return; const row = parseInt(cell.dataset.row); const col = parseInt(cell.dataset.col); cell.classList.add('selecting'); selectedCells.push({ cell, row, col }); }
+        function clearSelection() { selectedCells.forEach(sc => sc.cell.classList.remove('selecting')); selectedCells = []; }
+        function checkSelectedWord() { /* ... (lógica igual) ... */
+             if (selectedCells.length < 2) { clearSelection(); return; }
+             let selectedString = selectedCells.map(sc => sc.cell.textContent).join('');
+             let selectedStringReversed = selectedString.split('').reverse().join('');
+             let wordFound = null;
+             for (const word of wordSearchWords) { if (!foundWords.includes(word) && (selectedString === word || selectedStringReversed === word)) { wordFound = word; break; } }
+             if (wordFound) { markWordAsFound(wordFound); } else { clearSelection(); }
+         }
+        function markWordAsFound(word) { /* ... (lógica igual) ... */
+             foundWords.push(word); selectedCells.forEach(sc => { sc.cell.classList.remove('selecting'); sc.cell.classList.add('found'); wordSearchGrid[sc.row][sc.col].found = true; }); const listItem = document.getElementById(`word-${word}`); if (listItem) { listItem.classList.add('found'); } selectedCells = []; if (foundWords.length === wordSearchWords.length) { wordSearchResultEl.textContent = "🎉 Parabéns! Todas as palavras encontradas!"; } else { wordSearchResultEl.textContent = `"${word}" encontrada! Continue...`; }
+         }
+
+
+         /* ========== Jogo da Memória (NOVO) ========== */
+         const memoryGridEl = document.getElementById('memoryGrid');
+         const memoryMovesEl = document.getElementById('memoryMoves');
+         const memoryMatchesEl = document.getElementById('memoryMatches');
+         const memoryResultEl = document.getElementById('memoryResult');
+         const memorySymbols = ['🍎', '🍌', '🍇', '🍓', '🥝', '🍍', '🍒', '🍉', '🍋', '🍊', '🍑', '🥭']; // 12 pares = 24 cartas
+         let memoryCards = [];
+         let flippedCards = [];
+         let matchedPairs = 0;
+         let moves = 0;
+         let memoryLockBoard = false; // Trava o tabuleiro durante a verificação
+
+         function createMemoryBoard() {
+             memoryGridEl.innerHTML = ''; // Limpa grid anterior
+             matchedPairs = 0; moves = 0; memoryLockBoard = false;
+             flippedCards = [];
+             memoryMovesEl.textContent = moves;
+             memoryMatchesEl.textContent = matchedPairs;
+              memoryResultEl.style.display = 'none'; // Esconde mensagem de vitória
+
+             // Duplica e embaralha os símbolos
+             const gameSymbols = [...memorySymbols, ...memorySymbols];
+             gameSymbols.sort(() => 0.5 - Math.random());
+
+             gameSymbols.forEach(symbol => {
+                 const card = document.createElement('div');
+                 card.classList.add('memory-card');
+                 card.dataset.symbol = symbol; // Guarda o símbolo no dataset
+
+                 // Cria as faces da carta
+                 card.innerHTML = `
+                     <div class="card-face card-back">?</div>
+                     <div class="card-face card-front">${symbol}</div>
+                 `;
+
+                 card.addEventListener('click', flipCard);
+                 memoryGridEl.appendChild(card);
+             });
+             memoryCards = document.querySelectorAll('.memory-card'); // Atualiza a lista de cartas
+         }
+
+         function flipCard() {
+             if (memoryLockBoard) return; // Ignora clique se o tabuleiro estiver travado
+             if (this === flippedCards[0]) return; // Ignora clique na mesma carta já virada
+
+             this.classList.add('flipped');
+             flippedCards.push(this);
+
+             if (flippedCards.length === 2) {
+                 memoryLockBoard = true; // Trava o tabuleiro
+                 moves++;
+                 memoryMovesEl.textContent = moves;
+                 checkForMatch();
+             }
+         }
+
+         function checkForMatch() {
+             const [card1, card2] = flippedCards;
+             const isMatch = card1.dataset.symbol === card2.dataset.symbol;
+
+             if (isMatch) {
+                 disableCards();
+             } else {
+                 unflipCards();
+             }
+         }
+
+         function disableCards() {
+             flippedCards.forEach(card => {
+                 card.removeEventListener('click', flipCard); // Remove listener
+                 card.classList.add('matched'); // Adiciona classe de par encontrado
+             });
+             matchedPairs++;
+             memoryMatchesEl.textContent = matchedPairs;
+             resetBoardState();
+
+             // Verificar condição de vitória
+             if (matchedPairs === memorySymbols.length) {
+                  memoryResultEl.textContent = `🎉 Parabéns! Você encontrou todos os pares em ${moves} movimentos!`;
+                  memoryResultEl.style.display = 'block';
+                 clearActiveGame(); // Limpa timeouts pendentes se houver
+             }
+         }
+
+         function unflipCards() {
+             // Define um timeout para o usuário ver a segunda carta
+              if (activeGameTimeout) clearTimeout(activeGameTimeout); // Limpa timeout anterior se houver
+             activeGameTimeout = setTimeout(() => {
+                 flippedCards.forEach(card => card.classList.remove('flipped'));
+                 resetBoardState();
+             }, 1000); // Tempo para ver as cartas (1 segundo)
+         }
+
+         function resetBoardState() {
+             [flippedCards, memoryLockBoard] = [[], false]; // Reseta cartas viradas e trava
+         }
+
+         function startMemoryGame() {
+             clearActiveGame(); // Limpa timers anteriores
+             createMemoryBoard();
+         }
+
+
+
+        /* ========== Tetris (Com Preview e Dificuldade) ========== */
+        const tetrisCanvas = document.getElementById('tetrisCanvas'); const tetrisCtx = tetrisCanvas.getContext('2d');
+        const nextPieceCanvas = document.getElementById('tetrisNextPiece'); const nextPieceCtx = nextPieceCanvas.getContext('2d');
+        const tetrisScoreEl = document.getElementById('tetrisScore'); const tetrisGameOverEl = document.getElementById('tetrisGameOver');
+        const tetrisBlockSize = 24; const tetrisBoardWidth = tetrisCanvas.width / tetrisBlockSize; const tetrisBoardHeight = tetrisCanvas.height / tetrisBlockSize;
+        let tetrisBoard, currentPiece, nextPiece, currentX, currentY, tetrisScore, tetrisGameOver, dropSpeed, initialDropSpeed;
+        const TETRIS_PIECES = [ /* ... (peças iguais) ... */ { shape: [[1,1,1,1]], color: '#00f0f0' }, { shape: [[1,1,0],[0,1,1]], color: '#00f000' }, { shape: [[0,1,1],[1,1,0]], color: '#f00000' }, { shape: [[1,1,1],[0,1,0]], color: '#a000f0' }, { shape: [[1,1],[1,1]], color: '#f0f000' }, { shape: [[1,0,0],[1,1,1]], color: '#0000f0' }, { shape: [[0,0,1],[1,1,1]], color: '#f0a000' } ];
+        function createEmptyBoard() { return Array.from({ length: tetrisBoardHeight }, () => Array(tetrisBoardWidth).fill(0)); }
+        function getRandomTetrisPiece() { const index = Math.floor(Math.random() * TETRIS_PIECES.length); return JSON.parse(JSON.stringify(TETRIS_PIECES[index])); }
+        function spawnNewTetrisPiece() { /* ... (igual) ... */
+             currentPiece = nextPiece || getRandomTetrisPiece(); nextPiece = getRandomTetrisPiece();
+             currentX = Math.floor(tetrisBoardWidth / 2) - Math.ceil(currentPiece.shape[0].length / 2); currentY = 0;
+             drawNextPiece();
+             if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { tetrisGameOver = true; }
+         }
+        function checkTetrisCollision(pieceShape, x, y, board) { /* ... (igual) ... */
+             for (let r = 0; r < pieceShape.length; r++) { for (let c = 0; c < pieceShape[r].length; c++) { if (pieceShape[r][c]) { const boardX = x + c; const boardY = y + r; if (boardX < 0 || boardX >= tetrisBoardWidth || boardY >= tetrisBoardHeight || (boardY >= 0 && board[boardY] && board[boardY][boardX] !== 0)) return true; } } } return false;
+         }
+        function freezeTetrisPiece() { /* ... (igual) ... */
+             const shape = currentPiece.shape; const color = currentPiece.color; for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { const boardX = currentX + c; const boardY = currentY + r; if (boardY >= 0 && boardY < tetrisBoardHeight && boardX >= 0 && boardX < tetrisBoardWidth) { tetrisBoard[boardY][boardX] = color; } else if (boardY < 0) { tetrisGameOver = true; return; } } } }
+         }
+        function clearTetrisLines() { /* ... (igual, mas acelera o jogo) ... */
+             let linesCleared = 0;
+             for (let r = tetrisBoardHeight - 1; r >= 0; r--) { if (tetrisBoard[r].every(cell => cell !== 0)) { linesCleared++; tetrisBoard.splice(r, 1); tetrisBoard.unshift(Array(tetrisBoardWidth).fill(0)); r++; } }
+             if (linesCleared > 0) { let points = [0, 100, 300, 500, 800]; tetrisScore += points[linesCleared] || 0; tetrisScoreEl.textContent = tetrisScore;
+                 // Acelera o jogo a cada X pontos ou linhas
+                 if (tetrisScore % 500 === 0 && dropSpeed > 200) { // Ex: acelera a cada 500 pontos
+                      dropSpeed = Math.max(200, dropSpeed * 0.9); // Reduz intervalo, mínimo 200ms
+                      clearInterval(activeGameInterval); // Limpa intervalo antigo
+                      activeGameInterval = setInterval(tetrisGameLoop, dropSpeed); // Cria novo com velocidade atualizada
+                      console.log("Tetris speed increased! New interval:", dropSpeed);
+                 }
+              }
+         }
+        function rotateTetrisPiece() { /* ... (igual) ... */
+             if (tetrisGameOver) return; const shape = currentPiece.shape; const N = shape.length; const M = shape[0].length; const newShape = Array.from({ length: M }, () => Array(N).fill(0)); for (let r = 0; r < N; r++) { for (let c = 0; c < M; c++) { if (shape[r][c]) newShape[c][N - 1 - r] = shape[r][c]; } } const oldShape = currentPiece.shape; currentPiece.shape = newShape; if (checkTetrisCollision(currentPiece.shape, currentX, currentY, tetrisBoard)) { currentPiece.shape = oldShape; }
+        }
+        function moveTetrisPiece(dx, dy) { /* ... (igual) ... */
+             if (tetrisGameOver) return false; const newX = currentX + dx; const newY = currentY + dy; if (!checkTetrisCollision(currentPiece.shape, newX, newY, tetrisBoard)) { currentX = newX; currentY = newY; return true; } return false;
+        }
+        function tetrisGameLoop() { /* ... (igual, usa display toggle) ... */
+              if (tetrisGameOver) {
+                  clearInterval(activeGameInterval); activeGameInterval = null;
+                   tetrisGameOverEl.style.display = 'block'; // Mostra mensagem
+                  tetrisGameOverEl.classList.add('visible');
+                  if (activeKeyListener) { document.removeEventListener('keydown', activeKeyListener); activeKeyListener = null; }
+                  console.log("Tetris Over! Score:", tetrisScore); return;
+              }
+              if (!moveTetrisPiece(0, 1)) {
+                   freezeTetrisPiece();
+                   if (tetrisGameOver) { drawTetris(); tetrisGameLoop(); return; } // Verifica game over após congelar
+                   clearTetrisLines(); spawnNewTetrisPiece();
+                   if (tetrisGameOver) { drawTetrisBoard(); tetrisGameLoop(); return; } // Verifica game over após spawn
+              }
+              drawTetris();
+         }
+        function drawTetris() { /* ... (igual) ... */ tetrisCtx.fillStyle = '#000'; tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height); drawTetrisBoard(); drawTetrisPieceShape(tetrisCtx, currentPiece.shape, currentX, currentY, currentPiece.color, tetrisBlockSize); }
+        function drawTetrisBoard() { /* ... (igual) ... */ for (let r = 0; r < tetrisBoardHeight; r++) { for (let c = 0; c < tetrisBoardWidth; c++) { if (tetrisBoard[r][c] !== 0) { drawTetrisBlock(tetrisCtx, c, r, tetrisBoard[r][c], tetrisBlockSize); } } } }
+        function drawTetrisPieceShape(ctx, shape, xOffset, yOffset, color, blockSize) { /* ... (igual) ... */ for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c]) { drawTetrisBlock(ctx, xOffset + c, yOffset + r, color, blockSize); } } } }
+        function drawTetrisBlock(ctx, gridX, gridY, color, blockSize) { /* ... (igual) ... */ if (gridY < 0) return; const x = gridX * blockSize; const y = gridY * blockSize; ctx.fillStyle = color; ctx.fillRect(x, y, blockSize, blockSize); ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; ctx.strokeRect(x, y, blockSize, blockSize); }
+        function drawNextPiece() { /* ... (igual) ... */
+             const previewBlockSize = nextPieceCanvas.width / 4; nextPieceCtx.fillStyle = '#000'; nextPieceCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+             if (nextPiece) { const shape = nextPiece.shape; const shapeWidth = shape[0].length; const shapeHeight = shape.length; const xOff = Math.floor((4 - shapeWidth) / 2); const yOff = Math.floor((4 - shapeHeight) / 2); drawTetrisPieceShape(nextPieceCtx, shape, xOff, yOff, nextPiece.color, previewBlockSize); }
+         }
+        function handleTetrisKey(e) { /* ... (igual) ... */ if (tetrisGameOver) return; let moved = false; switch (e.key) { case 'ArrowLeft': moved = moveTetrisPiece(-1, 0); break; case 'ArrowRight': moved = moveTetrisPiece(1, 0); break; case 'ArrowDown': moved = moveTetrisPiece(0, 1); if(moved) tetrisScore += 1; break; /* Ponto por acelerar */ case 'ArrowUp': case ' ': rotateTetrisPiece(); moved = true; e.preventDefault(); break; } if (moved) { tetrisScoreEl.textContent = tetrisScore; drawTetris(); } }
+        function startTetris() {
+             console.log("Starting Tetris..."); clearActiveGame();
+             tetrisBoard = createEmptyBoard(); tetrisScore = 0; tetrisGameOver = false;
+             initialDropSpeed = parseInt(settings.tetrisDifficulty) || 1000; // Pega velocidade da config
+             dropSpeed = initialDropSpeed; // Reseta velocidade atual
+             tetrisScoreEl.textContent = tetrisScore;
+             tetrisGameOverEl.classList.remove('visible'); tetrisGameOverEl.style.display = 'none'; // Garante que está escondido
+             nextPiece = getRandomTetrisPiece(); spawnNewTetrisPiece();
+             activeKeyListener = handleTetrisKey; document.addEventListener('keydown', activeKeyListener);
+             activeGameInterval = setInterval(tetrisGameLoop, dropSpeed);
+             drawTetris();
+        }
+
+
+        /* ========== Snake (Com Skins e Dificuldade) ========== */
+        const snakeCanvas = document.getElementById('snakeCanvas'); const snakeCtx = snakeCanvas.getContext('2d'); const snakeScoreEl = document.getElementById('snakeScore'); const snakeGameOverEl = document.getElementById('snakeGameOver'); const snakeGridSize = 20; let snakeTileCount; // Calculado dinamicamente
+        let snake, snakeDirection, snakeFood, snakeScore, snakeGameOver, snakeSpeed;
+
+        function initSnake() {
+             snakeCanvasSize = snakeCanvas.clientWidth; // Pega tamanho atual do canvas
+             snakeCanvas.width = snakeCanvasSize; // Ajusta resolução interna
+             snakeCanvas.height = snakeCanvasSize;
+             snakeTileCount = snakeCanvasSize / snakeGridSize;
+
+             const startX = Math.floor(snakeTileCount / 2); const startY = Math.floor(snakeTileCount / 2);
+             snake = [{ x: startX, y: startY }]; snakeDirection = { x: 0, y: 0 }; snakeScore = 0; snakeGameOver = false;
+             snakeScoreEl.textContent = snakeScore;
+             snakeGameOverEl.classList.remove('visible'); snakeGameOverEl.style.display = 'none'; // Garante que está escondido
+             placeSnakeFood();
+        }
+        function updateSnake() { /* ... (igual, usa display toggle) ... */
+             if (snakeGameOver) {
+                 clearInterval(activeGameInterval); activeGameInterval = null;
+                  snakeGameOverEl.style.display = 'block'; // Mostra
+                 snakeGameOverEl.classList.add('visible');
+                 if (activeKeyListener) { document.removeEventListener('keydown', activeKeyListener); activeKeyListener = null; }
+                 return;
+             }
+             if (snakeDirection.x === 0 && snakeDirection.y === 0 && snake.length === 1) { // Não mover se não iniciou e só tem a cabeça
+                 drawSnake(); return;
+             }
+             let head = { x: snake[0].x + snakeDirection.x, y: snake[0].y + snakeDirection.y };
+             // Verifica colisão com bordas
+             if (head.x < 0 || head.x >= snakeTileCount || head.y < 0 || head.y >= snakeTileCount) { snakeGameOver = true; drawSnake(); updateSnake(); return; }
+             // Verifica colisão com o corpo
+             for (let i = 1; i < snake.length; i++) { if (snake[i].x === head.x && snake[i].y === head.y) { snakeGameOver = true; drawSnake(); updateSnake(); return; } }
+
+             snake.unshift(head); // Adiciona nova cabeça
+
+             // Verifica se comeu a comida
+             if (Math.floor(head.x) === Math.floor(snakeFood.x) && Math.floor(head.y) === Math.floor(snakeFood.y)) {
+                  snakeScore++; snakeScoreEl.textContent = snakeScore; placeSnakeFood();
+                  // Opcional: Aumentar velocidade ao comer
+                  // if (snakeSpeed > 50 && snakeScore % 5 === 0) { snakeSpeed = Math.max(50, snakeSpeed - 10); clearInterval(activeGameInterval); activeGameInterval = setInterval(updateSnake, snakeSpeed); }
+             } else {
+                  snake.pop(); // Remove a cauda se não comeu
+             }
+             drawSnake();
+         }
+        function placeSnakeFood() { /* ... (igual) ... */
+             let newFoodPosition;
+             do { newFoodPosition = { x: Math.floor(Math.random() * snakeTileCount), y: Math.floor(Math.random() * snakeTileCount) }; }
+             while (snake.some(segment => Math.floor(segment.x) === Math.floor(newFoodPosition.x) && Math.floor(segment.y) === Math.floor(newFoodPosition.y)));
+             snakeFood = newFoodPosition;
+         }
+        function drawSnake() { /* ... (igual, usa skin da config) ... */
+              snakeCtx.fillStyle = settings.theme === 'light' ? '#eee' : '#000'; // Fundo baseado no tema
+              snakeCtx.fillRect(0, 0, snakeCanvasSize, snakeCanvasSize);
+              // Comida
+              snakeCtx.fillStyle = '#f00';
+              snakeCtx.fillRect(snakeFood.x * snakeGridSize, snakeFood.y * snakeGridSize, snakeGridSize - 1, snakeGridSize - 1);
+              // Cobra
+              const skin = settings.snakeSkin;
+              snake.forEach((segment, index) => {
+                  const x = segment.x * snakeGridSize; const y = segment.y * snakeGridSize; const size = snakeGridSize - 1;
+                  const isHead = index === 0;
+                  if (skin === 'blue') { snakeCtx.fillStyle = isHead ? '#0077cc' : '#00aaff'; }
+                  else if (skin === 'rainbow') { const hue = (index * 20 + Date.now()/10) % 360; snakeCtx.fillStyle = `hsl(${hue}, 100%, 50%)`; } // Rainbow animado
+                  else if (skin === 'matrix') { snakeCtx.fillStyle = isHead ? '#fff' : (Math.random() > 0.1 ? '#0f0' : '#0a0'); }
+                  else { snakeCtx.fillStyle = isHead ? '#00cc00' : '#0f0'; } // Verde padrão
+                  snakeCtx.fillRect(x, y, size, size);
+              });
+         }
+        function handleSnakeKey(e) { /* ... (igual) ... */
+              let newDirection = null;
+              switch (e.key) { case 'ArrowUp': if (snakeDirection.y !== 1) newDirection = { x: 0, y: -1 }; break; case 'ArrowDown': if (snakeDirection.y !== -1) newDirection = { x: 0, y: 1 }; break; case 'ArrowLeft': if (snakeDirection.x !== 1) newDirection = { x: -1, y: 0 }; break; case 'ArrowRight': if (snakeDirection.x !== -1) newDirection = { x: 1, y: 0 }; break; }
+              if (newDirection) {
+                   // Evitar iniciar o jogo se não houver direção ainda (só cabeça)
+                   if (snake.length === 1 && snakeDirection.x === 0 && snakeDirection.y === 0) {
+                       // Primeira jogada, inicia o loop se não estiver rodando
+                       if (!activeGameInterval) {
+                            activeGameInterval = setInterval(updateSnake, snakeSpeed);
+                       }
+                   }
+                   snakeDirection = newDirection;
+                   e.preventDefault();
+              }
+         }
+        function startSnake() {
+             console.log("Starting Snake..."); clearActiveGame();
+             snakeSpeed = parseInt(settings.snakeDifficulty) || 150; // Pega velocidade da config
+             initSnake();
+             activeKeyListener = handleSnakeKey; document.addEventListener('keydown', activeKeyListener);
+             // Não iniciar intervalo aqui, iniciar no primeiro movimento em handleSnakeKey ou após um delay?
+             // Vamos iniciar aqui para o jogo começar visualmente
+             drawSnake(); // Desenho inicial
+             // O jogo só se move após a primeira tecla pressionada (ver handleSnakeKey)
+        }
+
+
+        /* ========== Pong (Com keydown/keyup e game over melhorado) ========== */
+        const pongCanvas = document.getElementById('pongCanvas'); const pongCtx = pongCanvas.getContext('2d');
+        const pongScoreLeftEl = document.getElementById('pongScoreLeft'); const pongScoreRightEl = document.getElementById('pongScoreRight');
+        const pongGameOverEl = document.getElementById('pongGameOver');
+        const PADDLE_HEIGHT = 80, PADDLE_WIDTH = 10, BALL_RADIUS = 8;
+        const PADDLE_SPEED = 6, WINNING_SCORE = 5; // Velocidade um pouco menor
+        let ballX, ballY, ballSpeedX, ballSpeedY;
+        let paddleLeftY, paddleRightY;
+        let scoreLeft, scoreRight;
+        let pongGameOver;
+        let keysPressed = {};
+
+        function initPong() {
+             pongCanvas.width = pongCanvas.clientWidth; // Ajusta resolução
+             pongCanvas.height = pongCanvas.clientHeight;
+             scoreLeft = 0; scoreRight = 0; pongGameOver = false;
+             pongScoreLeftEl.textContent = scoreLeft; pongScoreRightEl.textContent = scoreRight;
+             pongGameOverEl.classList.remove('visible'); pongGameOverEl.style.display = 'none'; // Garante
+             paddleLeftY = paddleRightY = (pongCanvas.height - PADDLE_HEIGHT) / 2;
+             resetPongBall(Math.random() > 0.5 ? 1 : -1); // Direção inicial aleatória
+        }
+        function resetPongBall(direction) { /* ... (igual) ... */
+             ballX = pongCanvas.width / 2; ballY = pongCanvas.height / 2;
+             ballSpeedY = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 2 + 3); // Speed 3-5
+             ballSpeedX = direction * (Math.random() * 2 + 4); // Speed 4-6
+        }
+        function movePongPaddles() { /* ... (igual) ... */
+              if (keysPressed['w'] || keysPressed['W']) paddleLeftY -= PADDLE_SPEED;
+              if (keysPressed['s'] || keysPressed['S']) paddleLeftY += PADDLE_SPEED;
+              if (keysPressed['ArrowUp']) paddleRightY -= PADDLE_SPEED;
+              if (keysPressed['ArrowDown']) paddleRightY += PADDLE_SPEED;
+              paddleLeftY = Math.max(0, Math.min(pongCanvas.height - PADDLE_HEIGHT, paddleLeftY));
+              paddleRightY = Math.max(0, Math.min(pongCanvas.height - PADDLE_HEIGHT, paddleRightY));
+         }
+        function movePongBall() { /* ... (igual) ... */
+              if (pongGameOver) return; ballX += ballSpeedX; ballY += ballSpeedY;
+              // Wall collision (Top/Bottom)
+              if (ballY - BALL_RADIUS < 0 || ballY + BALL_RADIUS > pongCanvas.height) { ballSpeedY = -ballSpeedY; ballY = (ballY - BALL_RADIUS < 0) ? BALL_RADIUS : pongCanvas.height - BALL_RADIUS; }
+              // Paddle Collision
+              const hitLeft = ballX - BALL_RADIUS < PADDLE_WIDTH && ballY > paddleLeftY && ballY < paddleLeftY + PADDLE_HEIGHT && ballSpeedX < 0;
+              const hitRight = ballX + BALL_RADIUS > pongCanvas.width - PADDLE_WIDTH && ballY > paddleRightY && ballY < paddleRightY + PADDLE_HEIGHT && ballSpeedX > 0;
+              if (hitLeft || hitRight) {
+                   ballSpeedX = -ballSpeedX * 1.02; // Inverte e acelera um pouco
+                   const paddleY = hitLeft ? paddleLeftY : paddleRightY;
+                   let deltaY = ballY - (paddleY + PADDLE_HEIGHT / 2);
+                   ballSpeedY = deltaY * 0.25; // Mais influência do ponto de toque
+                   // Limitar velocidade máxima Y
+                   ballSpeedY = Math.max(-8, Math.min(8, ballSpeedY));
+              }
+              // Score
+              if (ballX - BALL_RADIUS < 0) { scoreRight++; pongScoreRightEl.textContent = scoreRight; checkPongWin("Jogador 2", scoreRight); }
+              else if (ballX + BALL_RADIUS > pongCanvas.width) { scoreLeft++; pongScoreLeftEl.textContent = scoreLeft; checkPongWin("Jogador 1", scoreLeft); }
+         }
+         function checkPongWin(player, score) {
+              if (score >= WINNING_SCORE) { endPongGame(player); }
+              else { resetPongBall(player === "Jogador 1" ? 1 : -1); } // Serve para o outro lado
+         }
+        function endPongGame(winner) { /* ... (igual, usa display toggle) ... */
+              pongGameOver = true; pongGameOverEl.innerText = `🎉 ${winner} Venceu!`;
+               pongGameOverEl.style.display = 'block'; // Mostra
+              pongGameOverEl.classList.add('visible');
+              clearInterval(activeGameInterval); activeGameInterval = null;
+              if (activeKeyListeners.down) document.removeEventListener('keydown', activeKeyListeners.down);
+              if (activeKeyListeners.up) document.removeEventListener('keyup', activeKeyListeners.up);
+              activeKeyListeners = {}; keysPressed = {};
+         }
+        function drawPong() { /* ... (igual) ... */
+              pongCtx.fillStyle = settings.theme === 'light' ? '#ddd' : '#111'; pongCtx.fillRect(0, 0, pongCanvas.width, pongCanvas.height);
+              pongCtx.fillStyle = settings.theme === 'light' ? '#333' : '#fff';
+              pongCtx.fillRect(0, paddleLeftY, PADDLE_WIDTH, PADDLE_HEIGHT);
+              pongCtx.fillRect(pongCanvas.width - PADDLE_WIDTH, paddleRightY, PADDLE_WIDTH, PADDLE_HEIGHT);
+              pongCtx.beginPath(); pongCtx.arc(ballX, ballY, BALL_RADIUS, 0, Math.PI * 2); pongCtx.fill();
+              // Center line
+              pongCtx.strokeStyle = settings.theme === 'light' ? '#aaa' : '#555'; pongCtx.lineWidth = 4; pongCtx.setLineDash([10, 10]);
+              pongCtx.beginPath(); pongCtx.moveTo(pongCanvas.width / 2, 0); pongCtx.lineTo(pongCanvas.width / 2, pongCanvas.height); pongCtx.stroke(); pongCtx.setLineDash([]);
+         }
+        function pongGameLoop() { if (pongGameOver) return; movePongPaddles(); movePongBall(); drawPong(); }
+        function handlePongKeyDown(e) { keysPressed[e.key] = true; if (['ArrowUp', 'ArrowDown', 'w', 'W', 's', 'S'].includes(e.key)) e.preventDefault(); }
+        function handlePongKeyUp(e) { keysPressed[e.key] = false; }
+        function startPong() {
+             console.log("Starting Pong..."); clearActiveGame(); initPong(); keysPressed = {};
+             // Guarda as referências corretas para poder remover depois
+             activeKeyListeners = { down: handlePongKeyDown, up: handlePongKeyUp };
+             document.addEventListener('keydown', activeKeyListeners.down);
+             document.addEventListener('keyup', activeKeyListeners.up);
+             activeGameInterval = setInterval(pongGameLoop, 1000 / 60);
+             drawPong();
+        }
+
+    </script>
+</body>
+</html>
